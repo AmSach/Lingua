@@ -1985,7 +1985,9 @@
             raw: lineItems[0].fontName || '',
           };
 
-          lines.push({ y, x, fz, text, fontStyle, pgW, pgH });
+          const w = lineItems.length > 0 ? (lineItems[lineItems.length - 1].transform[4] + lineItems[lineItems.length - 1].width - lineItems[0].transform[4]) : 0;
+          const h = fz;
+          lines.push({ y, x, w, h, fz, text, fontStyle, pgW, pgH });
           if (!shouldSkip(text) && fz >= 6 && fz <= 72) allFontSizes.push(fz);
         }
 
@@ -2035,12 +2037,26 @@
       const SHORT_LINE_RE = /^\S+(\s+\S+){0,2}$/; // 1–3 words
 
       function flushParagraph() {
-        if (current && current.text.trim()) paragraphs.push(current);
+        if (current && current.text.trim()) {
+          const xs = current.lines.map(l => l.x);
+          const xMaxs = current.lines.map(l => l.x + l.w);
+          const ys = current.lines.map(l => l.y);
+          const yMaxs = current.lines.map(l => l.y + l.h);
+
+          current.x = Math.min(...xs);
+          current.w = Math.max(...xMaxs) - current.x;
+          current.y = Math.min(...ys);
+          current.h = Math.max(...yMaxs) - current.y;
+
+          paragraphs.push(current);
+        }
         current = null;
         lastLineText = '';
       }
 
-      for (const pageData of allPageData) {
+      for (let pi = 0; pi < allPageData.length; pi++) {
+        const pageData = allPageData[pi];
+        prevLine = null;
         for (let li = 0; li < pageData.lines.length; li++) {
           const ln = pageData.lines[li];
           if (!ln.text?.trim()) continue;
@@ -2055,7 +2071,6 @@
             const ref = pageData.lines[li - 1];
             yGapRatio = Math.abs(ref.y - ln.y) / Math.max(ln.fz * 1.35, 8);
           } else if (prevLine) {
-            // First line of new page: neutral continuation (only sentence logic can break)
             yGapRatio = 1.0;
           }
 
@@ -2068,25 +2083,41 @@
 
           if (shouldStartNew && !isShortFragment) {
             flushParagraph();
-            current = { text: ln.text, fontStyle: ln.fontStyle, isHeading, isCentered: ln.isCentered || isLarger, fzScale, origFz: ln.fz };
+            current = {
+              text: ln.text,
+              fontStyle: ln.fontStyle,
+              isHeading,
+              isCentered: ln.isCentered || isLarger,
+              fzScale,
+              origFz: ln.fz,
+              pageIndex: pi,
+              lines: [ln]
+            };
             lastLineText = ln.text;
           } else {
-            // Merge into current paragraph
             if (!current) {
-              current = { text: ln.text, fontStyle: ln.fontStyle, isHeading: false, isCentered: false, fzScale, origFz: ln.fz };
+              current = {
+                text: ln.text,
+                fontStyle: ln.fontStyle,
+                isHeading: false,
+                isCentered: false,
+                fzScale,
+                origFz: ln.fz,
+                pageIndex: pi,
+                lines: [ln]
+              };
             } else {
-              // Preserve hyphenated line breaks; otherwise join with a space
               const separator = /[-\u2011]$/.test(current.text.trimEnd()) ? '' : ' ';
-              current = { ...current, text: current.text + separator + ln.text };
+              current.text = current.text + separator + ln.text;
+              current.lines.push(ln);
             }
             lastLineText = ln.text;
           }
 
           prevLine = ln;
         }
-        // DO NOT flush at page boundaries — sentences may cross pages
+        flushParagraph();
       }
-      flushParagraph();
       return paragraphs;
     }
 
@@ -2098,15 +2129,15 @@
       const { PDFDocument, rgb, StandardFonts } = await import('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.js');
 
       const origDoc = await PDFDocument.load(origBytes.slice().buffer);
-      const { width: PW, height: PH } = origDoc.getPages()[0]?.getSize() || { width: 595.2, height: 841.92 };
-
       const outDoc = await PDFDocument.create();
+
+      // Copy pages from original document to preserve background layout, images, and drawings
+      const copiedPages = await outDoc.copyPages(origDoc, origDoc.getPageIndices());
+      copiedPages.forEach(page => outDoc.addPage(page));
+
+      const outPages = outDoc.getPages();
       const fonts = await embedPdfFonts(outDoc, StandardFonts, targetLang);
       const isRTL = ['ar', 'fa', 'ur', 'he'].includes(targetLang);
-
-      const MARGIN_L = 72, MARGIN_R = 72, MARGIN_T = 72, MARGIN_B = 72;
-      const contentW = PW - MARGIN_L - MARGIN_R;
-      const bodyFz = Math.min(Math.max(medianFz, 9), 12);
 
       // Resolve translations — fall back to original text if no translation available
       const resolvedParas = paragraphs.map(para => {
@@ -2114,98 +2145,92 @@
         return { ...para, displayText: (translated?.trim()) || para.text };
       });
 
-      // Lay out paragraphs with full look-ahead to avoid mid-paragraph page breaks
-      const pageBlocks = [];
-      let curPageBlocks = [];
-      let curY = PH - MARGIN_T;
-
-      function commitPage() {
-        pageBlocks.push(curPageBlocks);
-        curPageBlocks = [];
-        curY = PH - MARGIN_T;
-      }
-      commitPage(); // seed first page
-
       for (const para of resolvedParas) {
         if (!para.displayText?.trim()) continue;
+        const page = outPages[para.pageIndex];
+        if (!page) continue;
 
         const style = para.fontStyle || {};
         const activeFont = pickFontVariant(fonts, style);
 
-        // Scale heading font sizes up; clamp body text
-        let fz;
-        if (para.isCentered && para.fzScale > 1.12) fz = Math.min(bodyFz * para.fzScale, bodyFz * 2.0);
-        else if (para.isHeading && style.bold) fz = Math.min(bodyFz * 1.22, 16);
-        else fz = bodyFz;
-        fz = Math.round(fz * 2) / 2; // quantize to half-points
-        const lineHeight = fz * 1.65;
+        // Target bounding box on the original page
+        const bx = para.x;
+        const by = para.y;
+        const bw = para.w;
+        const bh = para.h;
 
-        const wrapWidth = para.isCentered ? contentW * 0.9 : contentW;
-        const wrappedLines = wrapText(para.displayText, fz, wrapWidth, activeFont);
+        // Draw a solid white rectangle to cover the original text
+        // (with a small padding to cover descenders/ascenders)
+        const pad = Math.max(para.origFz * 0.15, 2);
+        page.drawRectangle({
+          x: bx - pad,
+          y: by - pad,
+          width: bw + pad * 2,
+          height: bh + pad * 2,
+          color: rgb(1, 1, 1), // assume white background for text cover
+        });
 
-        const topMargin = para.isCentered ? lineHeight * 0.85 : lineHeight * 0.45;
-        const bottomMargin = para.isCentered ? lineHeight * 0.5 : 0;
-        const paraHeight = topMargin + wrappedLines.length * lineHeight + bottomMargin;
+        // Determine font size
+        let fz = para.origFz;
+        let lineHeight = fz * 1.25;
 
-        // Page-break logic:
-        // 1. If the whole paragraph fits on a fresh page → move to fresh page.
-        // 2. If it's taller than a full page → stay and let the line loop split it,
-        //    but only if at least one line fits. If not even one line fits, move to fresh page.
-        if (curY - paraHeight < MARGIN_B) {
-          const fitsOnFresh = (PH - MARGIN_T - paraHeight) >= MARGIN_B;
-          const oneLineFits = (curY - topMargin - lineHeight) >= MARGIN_B;
-          if (fitsOnFresh || para.isCentered || !oneLineFits) commitPage();
+        // Wrap text and check height. If it overflows the bounding box height, scale font size down.
+        let wrappedLines = wrapText(para.displayText, fz, bw, activeFont);
+        let textHeight = wrappedLines.length * lineHeight;
+
+        // Loop to shrink text size if it overflows the height of the bounding box
+        let attempts = 0;
+        while (textHeight > bh && fz > 5 && attempts < 10) {
+          fz -= 0.5;
+          lineHeight = fz * 1.25;
+          wrappedLines = wrapText(para.displayText, fz, bw, activeFont);
+          textHeight = wrappedLines.length * lineHeight;
+          attempts++;
         }
 
-        curY -= topMargin;
-
+        // Draw the wrapped text lines inside the bounding box
+        // We start drawing from the top of the bounding box (by + bh - fz) downwards.
+        let curY = by + bh - fz;
         for (const wline of wrappedLines) {
-          // Move to a new page before drawing if current line would fall below the margin
-          if (curY < MARGIN_B + lineHeight) commitPage();
-
-          let x;
+          let x = bx;
           if (para.isCentered) {
             const textW = measureTextWidth(wline, fz, activeFont);
-            x = MARGIN_L + Math.max((contentW - textW) / 2, 0);
-          } else {
-            x = isRTL ? (MARGIN_L + contentW - measureTextWidth(wline, fz, activeFont)) : MARGIN_L;
+            x = bx + Math.max((bw - textW) / 2, 0);
+          } else if (isRTL) {
+            const textW = measureTextWidth(wline, fz, activeFont);
+            x = bx + bw - textW;
           }
 
-          curPageBlocks.push({ text: wline, x, y: curY, fz, font: activeFont, style });
+          try {
+            page.drawText(wline, {
+              x,
+              y: curY,
+              size: fz,
+              font: activeFont,
+              color: rgb(0, 0, 0),
+            });
+
+            // Draw underline / strikethrough if needed
+            if (style.strikethrough) {
+              const w = measureTextWidth(wline, fz, activeFont);
+              page.drawLine({
+                start: { x, y: curY + fz * 0.32 },
+                end: { x: x + w, y: curY + fz * 0.32 },
+                thickness: Math.max(fz * 0.07, 0.5),
+                color: rgb(0, 0, 0)
+              });
+            }
+            if (style.underline) {
+              const w = measureTextWidth(wline, fz, activeFont);
+              page.drawLine({
+                start: { x, y: curY - fz * 0.12 },
+                end: { x: x + w, y: curY - fz * 0.12 },
+                thickness: Math.max(fz * 0.06, 0.4),
+                color: rgb(0, 0, 0)
+              });
+            }
+          } catch { /* ignore rendering errors */ }
           curY -= lineHeight;
-        }
-        curY -= bottomMargin;
-      }
-      commitPage(); // flush last page
-
-      // Draw all pages
-      for (let pi = 0; pi < pageBlocks.length; pi++) {
-        const pdfPage = outDoc.addPage([PW, PH]);
-
-        for (const inst of pageBlocks[pi]) {
-          try {
-            pdfPage.drawText(inst.text, { x: inst.x, y: inst.y, size: inst.fz, font: inst.font, color: rgb(0, 0, 0) });
-
-            if (inst.style.strikethrough) {
-              const w = measureTextWidth(inst.text, inst.fz, inst.font);
-              pdfPage.drawLine({ start: { x: inst.x, y: inst.y + inst.fz * 0.32 }, end: { x: inst.x + w, y: inst.y + inst.fz * 0.32 }, thickness: Math.max(inst.fz * 0.07, 0.5), color: rgb(0, 0, 0) });
-            }
-            if (inst.style.underline) {
-              const w = measureTextWidth(inst.text, inst.fz, inst.font);
-              pdfPage.drawLine({ start: { x: inst.x, y: inst.y - inst.fz * 0.12 }, end: { x: inst.x + w, y: inst.y - inst.fz * 0.12 }, thickness: Math.max(inst.fz * 0.06, 0.4), color: rgb(0, 0, 0) });
-            }
-          } catch { /* ignore render errors for individual text items */ }
-        }
-
-        // Centered page number at bottom (only on non-empty pages)
-        if (pageBlocks[pi].length > 0) {
-          try {
-            const pgNumStr = String(pi + 1);
-            const pgNumFz = 9;
-            const pgNumFont = fonts.regular;
-            const pgNumW = measureTextWidth(pgNumStr, pgNumFz, pgNumFont);
-            pdfPage.drawText(pgNumStr, { x: (PW - pgNumW) / 2, y: MARGIN_B * 0.42, size: pgNumFz, font: pgNumFont, color: rgb(0.45, 0.45, 0.45) });
-          } catch { /* ignore */ }
         }
       }
 
@@ -2559,6 +2584,94 @@
     async function processDocumentFile(item, srcLang, tgtLang) {
       const id = item.id;
       const ext = item.file.name.split('.').pop().toLowerCase();
+
+      if (ext === 'docx') {
+        try {
+          setRowSubtitle(id, 'Parsing docx…');
+          setRowProgressBar(id, 5);
+          const JSZip = await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
+          const zip = await JSZip.default.loadAsync(await item.file.arrayBuffer());
+
+          const xmlFiles = [];
+          zip.forEach((path, file) => {
+            if (path.startsWith('word/') && path.endsWith('.xml')) {
+              xmlFiles.push({ path, file });
+            }
+          });
+
+          const parser = new DOMParser();
+          const parsedFiles = [];
+          const allTexts = [];
+
+          for (const f of xmlFiles) {
+            const xmlText = await f.file.async('text');
+            const docXml = parser.parseFromString(xmlText, 'application/xml');
+            parsedFiles.push({ path: f.path, docXml });
+
+            const paragraphs = docXml.getElementsByTagName('w:p');
+            for (let i = 0; i < paragraphs.length; i++) {
+              const pEl = paragraphs[i];
+              const tEls = pEl.getElementsByTagName('w:t');
+              let pText = '';
+              for (let j = 0; j < tEls.length; j++) pText += tEls[j].textContent;
+              pText = pText.trim();
+              if (pText && !shouldSkip(pText)) {
+                allTexts.push(pText);
+              }
+            }
+          }
+
+          const uniqueTexts = [...new Set(allTexts)];
+          setRowSubtitle(id, `Translating ${uniqueTexts.length} paragraphs…`);
+          setRowProgressBar(id, 20);
+
+          const t0 = performance.now();
+          const translationMap = await translateAll(uniqueTexts, srcLang, tgtLang, (done, total) => {
+            setRowProgressBar(id, 20 + Math.round((done / total) * 65));
+            setRowSubtitle(id, `Translating ${done}/${total}…`);
+          });
+
+          setRowProgressBar(id, 88);
+          setRowSubtitle(id, 'Building output…');
+
+          const serializer = new XMLSerializer();
+          for (const pf of parsedFiles) {
+            const paragraphs = pf.docXml.getElementsByTagName('w:p');
+            let modified = false;
+            for (let i = 0; i < paragraphs.length; i++) {
+              const pEl = paragraphs[i];
+              const tEls = pEl.getElementsByTagName('w:t');
+              let pText = '';
+              for (let j = 0; j < tEls.length; j++) pText += tEls[j].textContent;
+              const trimmed = pText.trim();
+              if (trimmed && translationMap[trimmed]) {
+                const translated = translationMap[trimmed];
+                if (tEls.length > 0) {
+                  tEls[0].textContent = translated;
+                  for (let j = 1; j < tEls.length; j++) tEls[j].textContent = '';
+                  modified = true;
+                }
+              }
+            }
+            if (modified) {
+              const serialized = serializer.serializeToString(pf.docXml);
+              zip.file(pf.path, serialized);
+            }
+          }
+
+          const outBlob = await zip.generateAsync({ type: 'blob' });
+          const baseName = item.file.name.replace(/\.docx$/i, '');
+          const elapsed = Math.round(performance.now() - t0);
+          item.blobs = [{ blob: outBlob, name: baseName + '_translated.docx', label: '⬇ Download' }];
+          setRowSubtitle(id, `Done · ${uniqueTexts.length} paras · ${(elapsed / 1000).toFixed(1)}s`);
+          setRowDownloadActions(id, item.blobs);
+          return;
+        } catch (e) {
+          log('DOCX structured translation failed: ' + e.message, 'w');
+          // Fall back to old method if zip parsing fails
+        }
+      }
+
       setRowSubtitle(id, 'Parsing…');
       setRowProgressBar(id, 5);
 
