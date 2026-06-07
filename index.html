@@ -2178,9 +2178,9 @@
         let wrappedLines = wrapText(para.displayText, fz, bw, activeFont);
         let textHeight = wrappedLines.length * lineHeight;
 
-        // Loop to shrink text size if it overflows the height of the bounding box
+        // Loop to shrink text size if it wraps to more lines than original and overflows height
         let attempts = 0;
-        while (textHeight > bh && fz > 5 && attempts < 10) {
+        while (wrappedLines.length > para.lines.length && textHeight > bh + 2 && fz > 5 && attempts < 10) {
           fz -= 0.5;
           lineHeight = fz * 1.25;
           wrappedLines = wrapText(para.displayText, fz, bw, activeFont);
@@ -2608,10 +2608,10 @@
             const docXml = parser.parseFromString(xmlText, 'application/xml');
             parsedFiles.push({ path: f.path, docXml });
 
-            const paragraphs = docXml.getElementsByTagName('w:p');
+            const paragraphs = docXml.getElementsByTagNameNS('*', 'p');
             for (let i = 0; i < paragraphs.length; i++) {
               const pEl = paragraphs[i];
-              const tEls = pEl.getElementsByTagName('w:t');
+              const tEls = pEl.getElementsByTagNameNS('*', 't');
               let pText = '';
               for (let j = 0; j < tEls.length; j++) pText += tEls[j].textContent;
               pText = pText.trim();
@@ -2636,11 +2636,11 @@
 
           const serializer = new XMLSerializer();
           for (const pf of parsedFiles) {
-            const paragraphs = pf.docXml.getElementsByTagName('w:p');
+            const paragraphs = pf.docXml.getElementsByTagNameNS('*', 'p');
             let modified = false;
             for (let i = 0; i < paragraphs.length; i++) {
               const pEl = paragraphs[i];
-              const tEls = pEl.getElementsByTagName('w:t');
+              const tEls = pEl.getElementsByTagNameNS('*', 't');
               let pText = '';
               for (let j = 0; j < tEls.length; j++) pText += tEls[j].textContent;
               const trimmed = pText.trim();
