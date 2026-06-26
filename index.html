@@ -18,13 +18,13 @@
     }
 
     :root {
-      --bg: #07070d;
-      --sf: #0e0e18;
-      --card: #13131e;
-      --bd: rgba(255, 255, 255, 0.07);
-      --bhi: rgba(255, 255, 255, 0.13);
+      --bg: #121218;
+      --sf: #1c1c2b;
+      --card: #181826;
+      --bd: rgba(255, 255, 255, 0.08);
+      --bhi: rgba(255, 255, 255, 0.15);
       --tx: #f0eff7;
-      --mu: rgba(240, 239, 247, 0.42);
+      --mu: rgba(240, 239, 247, 0.45);
       --ac: #6c5ce7;
       --gl: rgba(108, 92, 231, 0.18);
       --ac2: #a78bfa;
@@ -39,6 +39,10 @@
     body {
       font-family: var(--sans);
       background: var(--bg);
+      background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1.2px, transparent 0),
+                        radial-gradient(rgba(255, 255, 255, 0.02) 1.2px, transparent 0);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
       color: var(--tx);
       min-height: 100vh;
       display: flex;
@@ -48,14 +52,14 @@
     /* ── Header ── */
     header {
       padding: .9rem 1.5rem;
-      border-bottom: 1px solid var(--bd);
+      border-bottom: 2px solid #0b0b12;
       display: flex;
       align-items: center;
       gap: .75rem;
       position: sticky;
       top: 0;
-      background: rgba(7, 7, 13, .92);
-      backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, #1c1c2b, #131320);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       z-index: 100;
     }
 
@@ -63,19 +67,22 @@
       font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: -.04em;
-      background: linear-gradient(135deg, #6c5ce7, #a78bfa, #818cf8);
+      background: linear-gradient(135deg, #8a7df7, #c084fc, #818cf8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .badge {
       font-family: var(--mono);
       font-size: .58rem;
-      padding: 2px 9px;
+      padding: 3px 10px;
       border-radius: 20px;
-      border: 1px solid rgba(167, 139, 250, .3);
-      color: var(--ac2);
-      background: rgba(108, 92, 231, .1);
+      border: 1px solid #4a3e9c;
+      color: #fff;
+      background: linear-gradient(to bottom, #6c5ce7, #4d3fc2);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
     }
 
     .header-right {
@@ -93,12 +100,13 @@
       height: 7px;
       border-radius: 50%;
       background: var(--mu);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
       transition: all .3s;
     }
 
     .status-dot.live {
       background: var(--gn);
-      box-shadow: 0 0 6px var(--gn);
+      box-shadow: 0 0 6px var(--gn), inset 0 1px 1px rgba(255,255,255,0.4);
     }
 
     /* ── Layout ── */
@@ -112,17 +120,19 @@
 
     /* ── Stats Bar ── */
     .stats-bar {
-      background: var(--sf);
-      border: 1px solid var(--bd);
+      background: #181826;
+      border: 1.5px solid #28283e;
+      border-top: 1.5px solid #3d3d5c;
       border-radius: 12px;
-      padding: .75rem 1rem;
+      padding: .8rem 1.1rem;
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.2rem;
       flex-wrap: wrap;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .stats-bar::before {
@@ -144,6 +154,7 @@
       font-family: var(--mono);
       color: var(--tx);
       letter-spacing: -.02em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     }
 
     .stat-label {
@@ -158,50 +169,59 @@
     .stat-divider {
       width: 1px;
       height: 28px;
-      background: var(--bd);
+      background: #252538;
+      box-shadow: 1px 0 0 rgba(255, 255, 255, 0.05);
       flex-shrink: 0;
     }
 
     .provider-pills {
       flex: 1;
       display: flex;
-      gap: 5px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
     .ppill {
       font-family: var(--mono);
       font-size: .58rem;
-      padding: 2px 8px;
+      padding: 3px 9px;
       border-radius: 20px;
-      border: 1px solid var(--bd);
+      border: 1px solid #28283d;
+      border-top: 1px solid #3c3c54;
+      background: linear-gradient(to bottom, #1d1d2b, #12121d);
       color: var(--mu);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
       transition: all .25s;
       white-space: nowrap;
       cursor: default;
     }
 
     .ppill.ok {
-      border-color: var(--gn);
+      border-color: #00875a;
+      border-top-color: #00bf80;
       color: var(--gn);
-      background: rgba(0, 214, 143, .07);
+      background: linear-gradient(to bottom, #132a22, #071712);
+      box-shadow: 0 2px 6px rgba(0, 214, 143, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .ppill.active {
-      border-color: var(--ac2);
+      border-color: #6d28d9;
+      border-top-color: #a78bfa;
       color: var(--ac2);
-      background: rgba(167, 139, 250, .1);
+      background: linear-gradient(to bottom, #2b1f4d, #140d29);
+      box-shadow: 0 2px 6px rgba(167, 139, 250, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
       animation: pill-blink .7s infinite;
     }
 
     .ppill.err {
-      border-color: var(--rd);
+      border-color: #b91c1c;
+      border-top-color: #ef4444;
       color: var(--rd);
-      opacity: .4;
+      background: linear-gradient(to bottom, #3b1717, #220b0b);
+      opacity: .5;
     }
 
     @keyframes pill-blink {
-
       0%,
       100% {
         opacity: 1;
@@ -216,13 +236,14 @@
     .lang-bar {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: .85rem;
     }
 
     select {
-      background: var(--card);
-      border: 1px solid var(--bd);
+      background: linear-gradient(to bottom, #20202f, #13131e);
+      border: 1.5px solid #2d2d3f;
+      border-top: 1.5px solid #43435e;
       color: var(--tx);
       padding: 8px 28px 8px 10px;
       border-radius: 8px;
@@ -232,29 +253,33 @@
       flex: 1;
       max-width: 185px;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.35)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='rgba%28255,255,255,0.45%29' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 9px center;
-      transition: border-color .2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: all .2s;
     }
 
     select:focus {
       outline: none;
       border-color: var(--ac);
+      box-shadow: 0 0 8px rgba(108, 92, 231, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .swap-btn {
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      border: 1px solid var(--bd);
-      background: var(--card);
+      border: 1.5px solid #2d2d3f;
+      border-top: 1.5px solid #43435e;
+      background: linear-gradient(to bottom, #20202f, #13131e);
       color: var(--mu);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: .9rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
       transition: all .2s;
       flex-shrink: 0;
     }
@@ -263,6 +288,7 @@
       border-color: var(--ac);
       color: var(--ac);
       transform: rotate(180deg);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .lang-bar-note {
@@ -276,47 +302,52 @@
     .text-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: .75rem;
+      gap: .9rem;
       margin-bottom: .75rem;
     }
 
     .text-box {
-      background: var(--card);
-      border: 1px solid var(--bd);
-      border-radius: 10px;
+      background: #1a1a26;
+      border: 1.5px solid #2d2d3f;
+      border-top: 1.5px solid #3e3e59;
+      border-radius: 12px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       transition: border-color .2s;
     }
 
     .text-box:focus-within {
-      border-color: rgba(108, 92, 231, .4);
+      border-color: rgba(108, 92, 231, .6);
     }
 
     .text-box-header {
-      padding: 7px 11px;
-      border-bottom: 1px solid var(--bd);
+      padding: 9px 12px;
+      background: linear-gradient(to bottom, #1d1d2c, #13131e);
+      border-bottom: 2px solid #0d0d14;
       font-size: .65rem;
       font-family: var(--mono);
       color: var(--mu);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
     }
 
-    textarea {
-      background: transparent;
+    textarea, .translation-output {
+      background: #09090f !important;
       border: none;
       color: var(--tx);
       font-family: var(--sans);
       font-size: .88rem;
       line-height: 1.65;
-      padding: 11px;
+      padding: 12.5px;
       resize: none;
       min-height: 155px;
       flex: 1;
       width: 100%;
+      box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.85);
     }
 
     textarea:focus {
@@ -328,7 +359,6 @@
     }
 
     .translation-output {
-      padding: 11px;
       font-size: .88rem;
       line-height: 1.65;
       min-height: 155px;
@@ -349,21 +379,24 @@
       flex-wrap: wrap;
       margin-bottom: 1.1rem;
       padding-bottom: 1.1rem;
-      border-bottom: 1px solid var(--bd);
+      border-bottom: 1.5px solid #20202e;
     }
 
     /* ── Buttons ── */
     .btn {
-      background: linear-gradient(135deg, var(--ac), var(--ac3));
+      background: linear-gradient(to bottom, #8a7df7, #4d3fc2);
       color: #fff;
-      border: none;
+      border: 1px solid #3c2f9d;
+      border-top: 1px solid #ada2ff;
       padding: 9px 22px;
       border-radius: 8px;
       font-family: var(--sans);
       font-size: .83rem;
-      font-weight: 500;
+      font-weight: 700;
       cursor: pointer;
-      transition: all .2s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+      transition: all .15s;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -371,9 +404,14 @@
     }
 
     .btn:hover {
-      opacity: .9;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(108, 92, 231, .35);
+      background: linear-gradient(to bottom, #9b90ff, #5748d6);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(108, 92, 231, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(1.5px);
+      background: linear-gradient(to bottom, #4d3fc2, #3c2f9d);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 2px 5px rgba(0, 0, 0, 0.5);
     }
 
     .btn:disabled {
@@ -381,23 +419,36 @@
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
+      text-shadow: none;
     }
 
     .ghost-btn {
-      background: transparent;
-      border: 1px solid var(--bd);
-      color: var(--mu);
+      background: linear-gradient(to bottom, #252536, #161622);
+      border: 1px solid #3c3c52;
+      border-top: 1px solid #585876;
+      color: var(--tx);
       padding: 8px 13px;
       border-radius: 7px;
       font-family: var(--mono);
       font-size: .66rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all .2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+      transition: all .15s;
     }
 
     .ghost-btn:hover {
-      border-color: var(--bhi);
-      color: var(--tx);
+      background: linear-gradient(to bottom, #2b2b3f, #1c1c2b);
+      border-color: #4a4a66;
+      color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .ghost-btn:active {
+      transform: translateY(1px);
+      background: linear-gradient(to bottom, #161622, #0d0d16);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     /* ── Neural Viz (loading animation) ── */
@@ -517,19 +568,22 @@
 
     /* ── Drop Zone ── */
     .drop-zone {
-      border: 2px dashed var(--bhi);
+      border: 2px dashed #40405c;
       border-radius: 12px;
-      padding: 2rem 1.5rem;
+      padding: 2.2rem 1.5rem;
       text-align: center;
       cursor: pointer;
-      transition: all .2s;
+      background: linear-gradient(to bottom, #12121c, #0a0a12);
+      box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: all .25s;
       position: relative;
     }
 
     .drop-zone:hover,
     .drop-zone.over {
       border-color: var(--ac);
-      background: var(--gl);
+      background: linear-gradient(to bottom, #161626, #0e0e1c);
+      box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7), 0 0 12px rgba(108, 92, 231, 0.35);
     }
 
     .drop-zone input {
@@ -567,26 +621,31 @@
     }
 
     .file-row {
-      background: var(--card);
-      border: 1px solid var(--bd);
+      background: linear-gradient(to bottom, #1e1e2c, #131320);
+      border: 1px solid #2b2b3e;
+      border-top: 1px solid #3c3c58;
       border-radius: 10px;
-      padding: .7rem .9rem;
+      padding: .75rem 1rem;
       display: flex;
       align-items: center;
       gap: .75rem;
-      transition: border-color .2s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: all .2s;
     }
 
     .file-row.running {
-      border-color: rgba(167, 139, 250, .4);
+      border-color: var(--ac2);
+      box-shadow: 0 4px 12px rgba(167, 139, 250, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
 
     .file-row.done {
-      border-color: rgba(0, 214, 143, .35);
+      border-color: var(--gn);
+      box-shadow: 0 4px 12px rgba(0, 214, 143, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
 
     .file-row.err {
-      border-color: rgba(239, 68, 68, .35);
+      border-color: var(--rd);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
 
     .file-row-icon {
@@ -741,18 +800,22 @@
     /* ── Console / Log ── */
     .log-box {
       margin-top: 1.3rem;
-      border: 1px solid var(--bd);
-      border-radius: 11px;
+      background: #181826;
+      border: 1.5px solid #28283e;
+      border-top: 1.5px solid #3d3d5c;
+      border-radius: 12px;
       overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .log-header {
-      padding: 7px 11px;
-      border-bottom: 1px solid var(--bd);
+      padding: 9px 12px;
+      background: linear-gradient(to bottom, #1d1d2c, #13131e);
+      border-bottom: 2px solid #0d0d14;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--sf);
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
     }
 
     .log-title {
@@ -769,12 +832,13 @@
       height: 5px;
       border-radius: 50%;
       background: var(--mu);
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.5);
       transition: all .25s;
     }
 
     .log-dot.on {
       background: var(--gn);
-      box-shadow: 0 0 5px var(--gn);
+      box-shadow: 0 0 6px var(--gn), inset 0 1px 1px rgba(255,255,255,0.4);
     }
 
     .log-count {
@@ -784,25 +848,41 @@
     }
 
     .log-clear-btn {
-      background: none;
-      border: 1px solid var(--bd);
+      background: linear-gradient(to bottom, #2b2b3a, #1a1a26);
+      border: 1px solid #3c3c52;
+      border-top: 1px solid #585876;
       color: var(--mu);
       font-family: var(--mono);
       font-size: .58rem;
       padding: 2px 7px;
       border-radius: 3px;
       cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+      transition: all 0.15s;
     }
 
     .log-clear-btn:hover {
       color: var(--tx);
-      border-color: var(--bhi);
+      border-color: #4a4a66;
+      background: linear-gradient(to bottom, #2d2d3f, #1c1c2b);
+    }
+
+    .log-clear-btn:active {
+      transform: translateY(0.5px);
+      background: linear-gradient(to bottom, #1a1a26, #0d0d16);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     #log {
       height: 180px;
       overflow-y: auto;
-      padding: 6px 10px;
+      margin: 6px;
+      border-radius: 8px;
+      background: #05050a;
+      border: 1.5px solid #0c0c12;
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.9);
+      padding: 8px 12px;
       font-family: var(--mono);
       font-size: .65rem;
       line-height: 1.85;
@@ -887,6 +967,361 @@
       header {
         padding: .8rem;
       }
+
+      select {
+        max-width: 140px;
+      }
+
+      .font-bar select {
+        max-width: 100%;
+        width: 100%;
+        margin-top: 4px;
+      }
+    }
+
+    /* ── Preview Modal ── */
+    .preview-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 7, 13, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .preview-modal.active {
+      display: flex;
+    }
+    .preview-content {
+      background: #181826;
+      border: 1.5px solid #2d2d42;
+      border-top: 1.5px solid #3e3e5c;
+      border-radius: 16px;
+      width: 100%;
+      padding: 1.5rem;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 2px solid #0d0d14;
+      padding-bottom: 0.75rem;
+    }
+    .preview-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--tx);
+      font-family: var(--sans);
+    }
+    .preview-close {
+      background: none;
+      border: none;
+      color: var(--mu);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .preview-close:hover {
+      color: var(--rd);
+    }
+    .preview-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ── PDF Comparison Slider ── */
+    .slider-container {
+      cursor: ew-resize;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--bd);
+    }
+    .slider-layer {
+      display: block;
+    }
+    .slider-top-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow: hidden;
+      border-right: 2px solid var(--ac);
+      box-shadow: 0 0 15px rgba(108, 92, 231, 0.6);
+      will-change: width;
+    }
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      right: -13px;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, #eeeeee, #888888);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333333;
+      font-size: 9px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ── Range Input Skeuomorphic Styling ── */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+    }
+    input[type="range"]:focus {
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #050508;
+      border-radius: 3px;
+      border: 1px solid #1f1f2e;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #eeeeee, #999999);
+      border: 1.5px solid #222222;
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    input[type="range"]::-moz-range-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #050508;
+      border-radius: 3px;
+      border: 1px solid #1f1f2e;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+    }
+    input[type="range"]::-moz-range-thumb {
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #eeeeee, #999999);
+      border: 1.5px solid #222222;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+
+    /* ── Skeuomorphic Toggle Switch ── */
+    .toggle-switch input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 38px;
+      height: 20px;
+      background: linear-gradient(to bottom, #252536, #161622);
+      border: 1.5px solid #3c3c52;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.7);
+      outline: none;
+      transition: background 0.2s;
+    }
+    .toggle-switch input[type="checkbox"]:checked {
+      background: linear-gradient(to bottom, #5748d6, #3225a8);
+      border-color: #5748d6;
+    }
+    .toggle-switch input[type="checkbox"]::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom, #ffffff, #cccccc);
+      border: 1px solid #666666;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: transform 0.2s;
+    }
+    .toggle-switch input[type="checkbox"]:checked::after {
+      transform: translateX(18px);
+    }
+    /* ── Visual Layout Editor ── */
+    .editor-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .editor-box {
+      position: absolute;
+      border: 1px dashed rgba(108, 92, 231, 0.45);
+      background: rgba(108, 92, 231, 0.02);
+      cursor: pointer;
+      pointer-events: auto;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .editor-box:hover {
+      border: 1.5px solid var(--ac);
+      background: rgba(108, 92, 231, 0.1);
+    }
+    .editor-box.active {
+      border: 2px solid #fdcb6e;
+      background: rgba(253, 203, 110, 0.12);
+      box-shadow: 0 0 8px rgba(253, 203, 110, 0.4);
+      z-index: 21;
+    }
+    /* ── Translation Memory & Glossary Drawer ── */
+    .tm-box {
+      margin-top: 1.3rem;
+      border: 1px solid var(--bd);
+      border-radius: 11px;
+      overflow: hidden;
+    }
+    .tm-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--sf);
+      cursor: pointer;
+      user-select: none;
+    }
+    .tm-title {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: .8rem;
+      color: var(--tx);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tm-toggle-icon {
+      font-size: .75rem;
+      color: var(--mu);
+      transition: transform 0.2s;
+    }
+    .tm-box.collapsed .tm-toggle-icon {
+      transform: rotate(-90deg);
+    }
+    .tm-content {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      padding: 14px;
+      background: var(--bg);
+      transition: max-height 0.3s ease-out;
+      overflow: hidden;
+    }
+    .tm-box.collapsed .tm-content {
+      display: none;
+    }
+    .tm-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tm-pane-title {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--mu);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .tm-search-wrap {
+      display: flex;
+      gap: 8px;
+    }
+    .tm-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--bd);
+      color: var(--tx);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+    }
+    .tm-textarea {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      color: var(--tx);
+      padding: 8px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+    .tm-table-wrap {
+      border: 1px solid var(--bd);
+      border-radius: 6px;
+      background: var(--card);
+      height: 130px;
+      overflow-y: auto;
+    }
+    .tm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--sans);
+      font-size: 0.76rem;
+    }
+    .tm-table th {
+      position: sticky;
+      top: 0;
+      background: var(--sf);
+      border-bottom: 1px solid var(--bd);
+      color: var(--mu);
+      font-weight: 600;
+      text-align: left;
+      padding: 5px 8px;
+    }
+    .tm-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--tx);
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tm-table tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+    .tm-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+    .tm-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--bd);
+      color: var(--tx);
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .tm-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
@@ -991,22 +1426,31 @@
     <!-- ══ FILE TRANSLATION ══ -->
     <div class="section-label">Files — PDF · DOCX · DOC · EPUB · TXT · ODT</div>
 
-    <!-- Font Picker (shown when a PDF is queued) -->
+    <!-- Font Picker & OCR Settings (shown when a PDF is queued) -->
     <div class="font-bar" id="fontBar">
       <span style="font-family:var(--mono);font-size:.66rem;color:var(--mu);white-space:nowrap">PDF output font:</span>
       <select id="fontPick"
-        style="background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:6px 28px 6px 10px;border-radius:7px;font-family:var(--sans);font-size:.78rem;cursor:pointer;flex:1;max-width:230px;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 12 12%27%3E%3Cpath fill=%27rgba(255,255,255,0.35)%27 d=%27M6 8L1 3h10z%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 9px center">
+        style="background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:6px 28px 6px 10px;border-radius:7px;font-family:var(--sans);font-size:.78rem;cursor:pointer;flex:1;max-width:210px;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 12 12%27%3E%3Cpath fill=%27rgba(255,255,255,0.35)%27 d=%27M6 8L1 3h10z%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 9px center">
         <option value="TimesRoman">Times New Roman (matches original)</option>
         <option value="Helvetica">Helvetica</option>
         <option value="Courier">Courier</option>
         <option value="noto-serif">Noto Serif (non-Latin scripts)</option>
         <option value="noto-sans">Noto Sans</option>
       </select>
+
+      <span style="font-family:var(--mono);font-size:.66rem;color:var(--mu);white-space:nowrap;margin-left:12px">OCR Mode:</span>
+      <select id="ocrMode"
+        style="background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:6px 28px 6px 10px;border-radius:7px;font-family:var(--sans);font-size:.78rem;cursor:pointer;flex:1;max-width:210px;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 12 12%27%3E%3Cpath fill=%27rgba(255,255,255,0.35)%27 d=%27M6 8L1 3h10z%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 9px center">
+        <option value="auto">Auto (Scanned Only)</option>
+        <option value="force">Force OCR (All Pages)</option>
+        <option value="off">Off (Fast Text Extract)</option>
+      </select>
+
       <span id="fontNote" style="font-family:var(--mono);font-size:.61rem;color:var(--mu)"></span>
     </div>
 
     <div class="drop-zone" id="mainDz">
-      <input type="file" id="mainInput" accept=".pdf,.docx,.doc,.epub,.txt,.odt" multiple
+      <input type="file" id="mainInput" accept=".pdf,.docx,.doc,.epub,.txt,.odt,.png,.jpg,.jpeg" multiple
         onchange="addFiles(this.files)">
       <div class="dz-icon">📂</div>
       <div class="dz-title">Drop files here or tap to browse</div>
@@ -1023,6 +1467,53 @@
 
     <div class="file-queue" id="fileQueue"></div>
 
+    <!-- Translation Memory & Glossary Drawer -->
+    <div class="tm-box collapsed" id="tmBox">
+      <div class="tm-header" onclick="toggleTmBox()">
+        <div class="tm-title">
+          <span>💾 Translation Memory & Glossary Manager</span>
+        </div>
+        <span class="tm-toggle-icon" id="tmToggleIcon">▼</span>
+      </div>
+      <div class="tm-content">
+        <div class="tm-pane">
+          <div class="tm-pane-title">Translation Memory Cache (<span id="tmCacheCount">0</span> pairs)</div>
+          <div class="tm-search-wrap">
+            <input type="text" class="tm-input" id="tmSearchInput" placeholder="Search cache..." oninput="searchTmCache()">
+            <button class="tm-btn" onclick="clearSearchTm()">Clear Search</button>
+          </div>
+          <div class="tm-table-wrap">
+            <table class="tm-table">
+              <thead>
+                <tr>
+                  <th>Source Text</th>
+                  <th>Translation</th>
+                </tr>
+              </thead>
+              <tbody id="tmTableBody">
+                <tr>
+                  <td colspan="2" style="text-align:center;color:var(--mu)">Type to search or import database...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tm-btn-group">
+            <button class="tm-btn" onclick="exportTm()">Export TM (JSON)</button>
+            <button class="tm-btn" onclick="document.getElementById('tmImportFile').click()">Import TM</button>
+            <input type="file" id="tmImportFile" style="display:none" accept=".json" onchange="importTm(event)">
+            <button class="tm-btn" style="border-color:var(--rd);color:var(--rd)" onclick="clearTmCache()">Wipe Cache</button>
+          </div>
+        </div>
+        <div class="tm-pane">
+          <div class="tm-pane-title">Custom Glossary Override</div>
+          <textarea class="tm-textarea" id="glossaryInput" placeholder="Define rules (one per line):&#10;OriginalWord = TranslatedWord&#10;BrandName = BrandName" oninput="saveGlossary()"></textarea>
+          <div style="font-size:0.6rem;color:var(--mu);line-height:1.3">
+            Rules apply exact replacements before passing text to translators. Useful for brand protection, names, or blocking translation of code.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Console -->
     <div class="log-box">
       <div class="log-header">
@@ -1038,6 +1529,126 @@
           <span class="log-ts">--:--:--.---</span>
           <span class="log-msg d">Lingua v23 · unified interface · clean PDF reflow · headings/bold/italic preserved ·
             10 providers.</span>
+        </div>
+      </div>
+    </div>
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal" onclick="if(event.target===this) closePreviewModal()">
+      <div class="preview-content" id="previewContent" style="max-width: 800px; display: flex; flex-direction: column; height: 90vh; width: 95%; transition: max-width 0.3s ease;">
+        <div class="preview-header">
+          <div class="preview-title" id="previewTitle">👁️ Visual Translation Comparison</div>
+          <div style="display:flex; gap:15px; align-items:center;">
+            <!-- Page Selector (for multi-page PDFs) -->
+            <div id="pageSelectorContainer" style="display:none; align-items:center; gap:5px;">
+              <button class="btn" style="padding:4px 8px; font-size:0.75rem;" onclick="changePreviewPage(-1)">◀</button>
+              <span id="pageIndicator" style="font-size:0.75rem; font-family:var(--mono); color:var(--tx);">Page 1 / 1</span>
+              <button class="btn" style="padding:4px 8px; font-size:0.75rem;" onclick="changePreviewPage(1)">▶</button>
+            </div>
+            <!-- Editor Mode Toggle -->
+            <label class="toggle-switch" style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.75rem; font-family:var(--sans); user-select:none;">
+              <input type="checkbox" id="editorModeToggle" onchange="toggleEditorMode()" style="cursor:pointer;">
+              <span style="font-weight:600; color:var(--ac2);">✏️ Editor Mode</span>
+            </label>
+            <button class="preview-close" onclick="closePreviewModal()">✕</button>
+          </div>
+        </div>
+        
+        <!-- Main body: split horizontally when sidebar is visible -->
+        <div style="flex: 1; display: flex; min-height: 0; gap: 1rem;" id="previewMainBody">
+          <!-- Left Area: Canvases -->
+          <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: auto; background: #07070c; border-radius: 10px; border: 1px solid var(--bd); position: relative; min-width: 0;" id="previewContainer">
+            <div class="slider-container" id="sliderContainer" style="position: relative; display: inline-block; overflow: hidden; user-select: none;">
+              <!-- Canvases and overlay will be inserted here dynamically -->
+            </div>
+          </div>
+
+          <!-- Right Area: Sidebar (hidden by default) -->
+          <div id="editorSidebar" style="width: 320px; display: none; flex-direction: column; background: var(--sf); border: 1px solid var(--bd); border-radius: 10px; padding: 1rem; overflow-y: auto; gap: 12px; font-family: var(--sans);">
+            <div style="font-weight: 700; font-size: 0.9rem; border-bottom: 1px solid var(--bd); padding-bottom: 6px; color: var(--tx); display:flex; justify-content:space-between; align-items:center;">
+              <span>✏️ Block Inspector</span>
+              <button class="btn" style="padding: 2px 6px; font-size: 0.7rem; background: var(--bg);" onclick="deselectPara()">Deselect</button>
+            </div>
+            
+            <!-- Prompt if no paragraph is selected -->
+            <div id="editorPrompt" style="color: var(--mu); font-size: 0.75rem; text-align: center; margin-top: 2rem; line-height: 1.4;">
+              Click any highlighted text block on the canvas to inspect and edit details.
+            </div>
+
+            <!-- Editor Fields (shown when selected) -->
+            <div id="editorFields" style="display: none; flex-direction: column; gap: 12px;">
+              <div>
+                <label style="font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">Original Text</label>
+                <div id="editOrigText" style="font-size: 0.75rem; background: var(--bg); border: 1px solid var(--bd); border-radius: 4px; padding: 6px; color: var(--tx); max-height: 80px; overflow-y: auto; white-space: pre-wrap; margin-top: 4px;"></div>
+              </div>
+
+              <div>
+                <label style="font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase; display: flex; justify-content: space-between;">
+                  <span>Translated Text</span>
+                  <span id="editCharCount" style="font-family: var(--mono); font-size: 0.65rem;">0</span>
+                </label>
+                <textarea id="editTransText" rows="3" style="width: 100%; font-size: 0.75rem; background: var(--bg); border: 1px solid var(--bd); border-radius: 4px; padding: 6px; color: var(--tx); resize: vertical; margin-top: 4px; font-family: var(--sans);" oninput="onParaTextInput()"></textarea>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <div style="flex: 1;">
+                  <label style="font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">Font Size</label>
+                  <input type="number" id="editFontSize" step="0.5" style="width: 100%; font-size: 0.75rem; background: var(--bg); border: 1px solid var(--bd); border-radius: 4px; padding: 4px; color: var(--tx); margin-top: 4px;" oninput="onParaSizeInput()">
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end;">
+                  <label style="font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Styles</label>
+                  <div style="display: flex; gap: 4px;">
+                    <button id="btnEditBold" class="btn" style="flex:1; padding: 4px; font-weight: bold; font-size: 0.75rem;" onclick="toggleParaStyle('bold')">B</button>
+                    <button id="btnEditItalic" class="btn" style="flex:1; padding: 4px; font-style: italic; font-size: 0.75rem;" onclick="toggleParaStyle('italic')">I</button>
+                    <button id="btnEditCentered" class="btn" style="flex:1; padding: 4px; font-size: 0.75rem;" onclick="toggleParaStyle('centered')" title="Center Align">C</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Position Sliders -->
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">
+                  <span>X Position</span>
+                  <span id="valX" style="font-family: var(--mono);">0</span>
+                </div>
+                <input type="range" id="sliderX" min="0" max="1000" style="width: 100%; margin-top: 4px;" oninput="onParaPosSlider('x')">
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">
+                  <span>Y Position (from bottom)</span>
+                  <span id="valY" style="font-family: var(--mono);">0</span>
+                </div>
+                <input type="range" id="sliderY" min="0" max="1000" style="width: 100%; margin-top: 4px;" oninput="onParaPosSlider('y')">
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">
+                    <span>Width</span>
+                    <span id="valW" style="font-family: var(--mono);">0</span>
+                  </div>
+                  <input type="range" id="sliderW" min="10" max="1000" style="width: 100%; margin-top: 4px;" oninput="onParaPosSlider('w')">
+                </div>
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">
+                    <span>Height</span>
+                    <span id="valH" style="font-family: var(--mono);">0</span>
+                  </div>
+                  <input type="range" id="sliderH" min="5" max="1000" style="width: 100%; margin-top: 4px;" oninput="onParaPosSlider('h')">
+                </div>
+              </div>
+
+              <!-- Apply Button -->
+              <button id="applyReRenderBtn" class="btn" style="width:100%; background:var(--ac); color:var(--tx); font-weight:bold; margin-top:8px; padding: 8px;" onclick="applyParaChangesAndReRender()">
+                Apply & Re-render
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="preview-footer" style="margin-top:1rem; border-top:1px solid var(--bd); padding-top:0.75rem;">
+          <span id="reRenderStatus" style="margin-right:auto; align-self:center; font-size:0.75rem; color:var(--ac2); font-family:var(--mono);"></span>
+          <button class="btn" onclick="closePreviewModal()">Close Preview</button>
         </div>
       </div>
     </div>
@@ -1331,7 +1942,7 @@
         document.getElementById('tv-cache').textContent = count;
       }
 
-      return { getMany, setMany };
+      return { getMany, setMany, getDbInstance: openDb };
     })();
 
     // ── Skip filter (don't translate pure punctuation/numbers/URLs) ────────
@@ -1700,6 +2311,11 @@
       statsStop();
       const newPairs = uncached.filter(t => results[t] && results[t] !== t).map(t => [t, results[t]]);
       if (newPairs.length) TranslationCache.setMany(newPairs, srcLang, tgtLang);
+      
+      // Apply glossary override rules directly to all translated values
+      for (const key of Object.keys(results)) {
+        results[key] = applyGlossaryDirect(results[key]);
+      }
       return results;
     }
 
@@ -1752,7 +2368,8 @@
         }
 
         setProgressBar('tpbar', 100);
-        out.textContent = result || text;
+        const finalResult = applyGlossaryDirect(result || text);
+        out.textContent = finalResult;
         const elapsed = Math.round(performance.now() - t0);
         document.getElementById('wprov').textContent = `~${elapsed}ms`;
         document.getElementById('tVizLabel').textContent = 'Done!';
@@ -1776,25 +2393,57 @@
 
     // Maps target language codes to the appropriate Noto font variant
     const SCRIPT_FONTS = {
+      // CJK
       ja: 'noto-sans-cjk', ko: 'noto-sans-cjk', 'zh-CN': 'noto-sans-cjk', 'zh-TW': 'noto-sans-cjk',
-      ar: 'noto-sans-arabic', fa: 'noto-sans-arabic', ur: 'noto-sans-arabic', he: 'noto-sans-arabic',
+      // Arabic, Persian, Urdu
+      ar: 'noto-sans-arabic', fa: 'noto-sans-arabic', ur: 'noto-sans-arabic',
+      // Hebrew
+      he: 'noto-sans-hebrew',
+      // Indic
       hi: 'noto-sans-devanagari', ne: 'noto-sans-devanagari',
-      ta: 'noto-sans-tamil', te: 'noto-sans-telugu', bn: 'noto-sans-bengali', th: 'noto-sans-thai',
+      ta: 'noto-sans-tamil', te: 'noto-sans-telugu', bn: 'noto-sans-bengali',
+      // Thai
+      th: 'noto-sans-thai',
+      // Cyrillic
+      ru: 'noto-sans', uk: 'noto-sans', bg: 'noto-sans', sr: 'noto-sans',
+      // Greek
+      el: 'noto-sans',
+      // Latin with extended character sets (Central/Eastern European, Vietnamese)
+      vi: 'noto-sans', tr: 'noto-sans', pl: 'noto-sans', cs: 'noto-sans',
+      sk: 'noto-sans', hu: 'noto-sans', ro: 'noto-sans', hr: 'noto-sans',
+      sl: 'noto-sans', lt: 'noto-sans', lv: 'noto-sans', et: 'noto-sans',
+      az: 'noto-sans',
     };
 
     const FONT_URLS = {
-      'noto-serif': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif@5.0.7/files/noto-serif-latin-400-normal.woff2',
-      'noto-sans': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.0.12/files/noto-sans-latin-400-normal.woff2',
-      'noto-sans-cjk': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.4/files/noto-sans-sc-chinese-simplified-400-normal.woff',
-      'noto-sans-arabic': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-arabic@5.0.4/files/noto-sans-arabic-arabic-400-normal.woff',
-      'noto-sans-devanagari': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-devanagari@5.0.4/files/noto-sans-devanagari-devanagari-400-normal.woff',
-      'noto-sans-tamil': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tamil@5.0.4/files/noto-sans-tamil-tamil-400-normal.woff',
-      'noto-sans-telugu': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-telugu@5.0.4/files/noto-sans-telugu-telugu-400-normal.woff',
-      'noto-sans-bengali': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-bengali@5.0.4/files/noto-sans-bengali-bengali-400-normal.woff',
-      'noto-sans-thai': 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-thai@5.0.4/files/noto-sans-thai-thai-400-normal.woff',
+      'noto-serif': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-serif/400Regular/NotoSerif_400Regular.ttf',
+      'noto-sans': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans/400Regular/NotoSans_400Regular.ttf',
+      'noto-sans-cjk': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-sc/400Regular/NotoSansSC_400Regular.ttf',
+      'noto-sans-arabic': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-arabic/400Regular/NotoSansArabic_400Regular.ttf',
+      'noto-sans-hebrew': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-hebrew/400Regular/NotoSansHebrew_400Regular.ttf',
+      'noto-sans-devanagari': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-devanagari/400Regular/NotoSansDevanagari_400Regular.ttf',
+      'noto-sans-tamil': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-tamil/400Regular/NotoSansTamil_400Regular.ttf',
+      'noto-sans-telugu': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-telugu/400Regular/NotoSansTelugu_400Regular.ttf',
+      'noto-sans-bengali': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-bengali/400Regular/NotoSansBengali_400Regular.ttf',
+      'noto-sans-thai': 'https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-thai/400Regular/NotoSansThai_400Regular.ttf',
     };
 
     const fontCache = {};
+
+    function getTesseractLangCode(lang) {
+      const map = {
+        'en': 'eng', 'fr': 'fra', 'de': 'deu', 'es': 'spa', 'it': 'ita', 'pt': 'por', 'ru': 'rus',
+        'zh-CN': 'chi_sim', 'zh-TW': 'chi_tra', 'ja': 'jpn', 'ko': 'kor', 'ar': 'ara', 'hi': 'hin',
+        'bn': 'ben', 'tr': 'tur', 'vi': 'vie', 'th': 'tha', 'pl': 'pol', 'nl': 'nld', 'sv': 'swe',
+        'uk': 'ukr', 'cs': 'ces', 'ro': 'ron', 'hu': 'hun', 'he': 'heb',
+        'el': 'ell', 'da': 'dan', 'fi': 'fin', 'no': 'nor', 'id': 'ind', 'ms': 'msa', 'fa': 'fas',
+        'ur': 'urd', 'ta': 'tam', 'te': 'tel', 'kn': 'kan', 'ml': 'mal', 'gu': 'guj', 'mr': 'mar',
+        'pa': 'pan', 'tl': 'tgl', 'sw': 'swa', 'bg': 'bul', 'sk': 'slk', 'sl': 'slv', 'et': 'est',
+        'lv': 'lav', 'lt': 'lit', 'hr': 'hrv', 'sr': 'srp', 'sq': 'sqi', 'mk': 'mkd', 'hy': 'hye',
+        'ka': 'kat', 'az': 'aze', 'eu': 'eus', 'ca': 'cat', 'gl': 'glg', 'is': 'isl', 'cy': 'cym'
+      };
+      return map[lang] || 'eng';
+    }
 
     function detectFontStyle(fontName) {
       const fn = (fontName || '').toLowerCase();
@@ -1849,10 +2498,27 @@
         const url = FONT_URLS[fontKey] || FONT_URLS['noto-sans'];
         let bytes = fontCache[fontKey];
         if (!bytes) {
-          try { bytes = await (await fetch(url)).arrayBuffer(); fontCache[fontKey] = bytes; } catch { /* use fallback */ }
+          try {
+            bytes = await (await fetch(url)).arrayBuffer();
+            fontCache[fontKey] = bytes;
+          } catch (e) {
+            log(`jsDelivr fetch failed for ${fontKey}: ${e.message}. Trying backup CDN unpkg...`, 'w');
+            try {
+              const backupUrl = url.replace('https://cdn.jsdelivr.net/npm/', 'https://unpkg.com/');
+              bytes = await (await fetch(backupUrl)).arrayBuffer();
+              fontCache[fontKey] = bytes;
+            } catch (err2) {
+              log(`Backup CDN also failed for ${fontKey}: ${err2.message}`, 'e');
+            }
+          }
         }
         let font;
-        try { font = await pdfDoc.embedFont(bytes); } catch { font = await pdfDoc.embedFont(StandardFonts.Helvetica); }
+        try {
+          font = await pdfDoc.embedFont(bytes);
+        } catch (e) {
+          log(`Failed to embed font ${fontKey}: ${e.message}. Falling back to standard Helvetica.`, 'e');
+          font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        }
         return { regular: font, bold: font, italic: font, boldItalic: font };
       }
 
@@ -1909,11 +2575,93 @@
      * Extracts text items from every page, strips header/footer zones and
      * bare page-number lines, and groups items into logical lines.
      */
-    async function extractPdfPages(pdfDoc) {
+    // ── OCR WORKER POOL (Multi-threading) ──────────────────────────────────
+    class OcrWorkerPool {
+      constructor(lang, maxWorkers, logger) {
+        this.lang = lang;
+        this.maxWorkers = maxWorkers;
+        this.logger = logger;
+        this.workers = [];
+        this.idleWorkers = [];
+        this.jobQueue = [];
+        this.activeJobs = 0;
+        this.resolvePool = null;
+        this.rejectPool = null;
+      }
+
+      async init() {
+        log(`Initializing OCR Worker Pool with ${this.maxWorkers} workers...`, 'i');
+        const Tesseract = (await import('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.esm.min.js')).default;
+        const promises = [];
+        for (let i = 0; i < this.maxWorkers; i++) {
+          promises.push((async () => {
+            const worker = await Tesseract.createWorker(this.lang, 1, {
+              logger: m => {
+                if (this.logger) this.logger(m, i);
+              }
+            });
+            this.workers.push(worker);
+            this.idleWorkers.push(worker);
+          })());
+        }
+        await Promise.all(promises);
+        log(`OCR Worker Pool initialized with ${this.workers.length} WebAssembly threads.`, 'ok');
+      }
+
+      runOcr(jobs) {
+        this.jobQueue = [...jobs];
+        return new Promise((resolve, reject) => {
+          this.resolvePool = resolve;
+          this.rejectPool = reject;
+          this.processQueue();
+        });
+      }
+
+      processQueue() {
+        if (this.jobQueue.length === 0 && this.activeJobs === 0) {
+          this.resolvePool();
+          return;
+        }
+        while (this.idleWorkers.length > 0 && this.jobQueue.length > 0) {
+          const worker = this.idleWorkers.pop();
+          const job = this.jobQueue.shift();
+          this.activeJobs++;
+          this.runJob(worker, job);
+        }
+      }
+
+      async runJob(worker, job) {
+        try {
+          const result = await worker.recognize(job.canvas);
+          job.onComplete(result);
+        } catch (err) {
+          job.onError(err);
+        } finally {
+          this.idleWorkers.push(worker);
+          this.activeJobs--;
+          this.processQueue();
+        }
+      }
+
+      async terminate() {
+        log('Terminating OCR worker pool...', 'd');
+        await Promise.all(this.workers.map(w => w.terminate().catch(() => {})));
+      }
+    }
+
+    /**
+     * Extracts text items from every page, strips header/footer zones and
+     * bare page-number lines, and groups items into logical lines.
+     * Uses OcrWorkerPool for parallel OCR if needed.
+     */
+    async function extractPdfPages(pdfDoc, srcLang = 'auto', ocrMode = 'auto', onProgressUpdate = null) {
       const allPageData = [];
       const allFontSizes = [];
       let detectedFamily = null;
       const numPages = pdfDoc.numPages;
+
+      // First pass: extract standard metadata, viewports, and decide which pages need OCR
+      const pageInfo = [];
 
       for (let p = 1; p <= numPages; p++) {
         const page = await pdfDoc.getPage(p);
@@ -1921,92 +2669,245 @@
         const pgW = vp.width;
         const pgH = vp.height;
 
-        // Header/footer exclusion zones: top 9% and bottom 9% of page height (PDF y=0 is bottom)
-        const headerZoneY = pgH * 0.91;
-        const footerZoneY = pgH * 0.09;
-
         const textContent = await page.getTextContent();
         const rawItems = textContent.items.filter(i => i.str?.trim());
         if (p === 1 && !detectedFamily) detectedFamily = detectPdfFontFamily(rawItems);
 
-        // Group items by Y coordinate (rounded to nearest pixel, with ±3px tolerance)
-        const lineMap = new Map();
-        for (const item of rawItems) {
-          const itemY = item.transform[5];
-          if (itemY > headerZoneY || itemY < footerZoneY) continue; // strip header/footer zones
-
-          const y = Math.round(itemY);
-          let key = null;
-          for (const k of lineMap.keys()) { if (Math.abs(k - y) < 3) { key = k; break; } }
-          if (key === null) { key = y; lineMap.set(key, []); }
-          lineMap.get(key).push(item);
+        // Decide if OCR is needed for this page
+        let runOcr = false;
+        if (ocrMode === 'force') {
+          runOcr = true;
+        } else if (ocrMode === 'auto') {
+          const totalChars = rawItems.reduce((acc, it) => acc + (it.str || '').length, 0);
+          if (totalChars < 40) {
+            runOcr = true;
+          }
         }
 
-        // Build line objects from grouped items
-        const lines = [];
-        for (const [y, lineItems] of lineMap) {
-          lineItems.sort((a, b) => a.transform[4] - b.transform[4]); // sort left-to-right
+        pageInfo.push({ p, page, pgW, pgH, rawItems, runOcr, lines: [] });
+      }
 
-          let text = '';
-          for (let i = 0; i < lineItems.length; i++) {
-            if (i > 0 && lineItems[i - 1].hasEOL) {
-              text += ' ';
-            } else if (i > 0) {
-              const gap = lineItems[i].transform[4] - (lineItems[i - 1].transform[4] + lineItems[i - 1].width);
-              if (gap > lineItems[i - 1].width * 0.3) text += ' ';
+      // Filter pages that need OCR
+      const ocrPages = pageInfo.filter(pi => pi.runOcr);
+      
+      if (ocrPages.length > 0) {
+        const tesseractLang = getTesseractLangCode(srcLang);
+        const maxWorkers = Math.min(ocrPages.length, Math.min(4, navigator.hardwareConcurrency || 2));
+        
+        // Progress tracking state
+        const workerProgress = Array(maxWorkers).fill(0);
+        let completedJobs = 0;
+
+        const updateProgress = (m, workerIdx) => {
+          if (m && m.status) {
+            if (m.status.includes('downloading')) {
+              const match = m.status.match(/downloading\s+(\S+)/);
+              const modelName = match ? match[1].replace('.traineddata.gz', '') : tesseractLang;
+              const pct = Math.round(m.progress * 100);
+              const text = `Downloading OCR model (${modelName}): ${pct}%`;
+              const overallPct = 5 + Math.round(m.progress * 5); // 5% to 10%
+              if (onProgressUpdate) onProgressUpdate(text, overallPct);
+            } else if (m.status.includes('recognizing')) {
+              workerProgress[workerIdx] = m.progress;
+              const avgProgress = workerProgress.reduce((a, b) => a + b, 0) / maxWorkers;
+              const text = `OCR page ${completedJobs + 1}/${ocrPages.length}: ${Math.round(avgProgress * 100)}%`;
+              const overallPct = 10 + Math.round((completedJobs + avgProgress) / ocrPages.length * 70); // 10% to 80%
+              if (onProgressUpdate) onProgressUpdate(text, overallPct);
             }
-            text += lineItems[i].str;
           }
-          text = text.replace(/\s+/g, ' ').trim();
-          if (!text) continue;
+        };
 
-          // Skip bare page-number lines (digits optionally surrounded by dashes/spaces)
-          if (/^[\s\u2013\u2014-]*\d{1,4}[\s\u2013\u2014-]*$/.test(text)) continue;
+        const pool = new OcrWorkerPool(tesseractLang, maxWorkers, updateProgress);
+        
+        try {
+          if (onProgressUpdate) onProgressUpdate('Spawning OCR thread pool…', 5);
+          await pool.init();
 
-          const fz = Math.round(Math.max(Math.abs(lineItems[0].transform[0]), Math.abs(lineItems[0].transform[3]), 6) * 10) / 10;
-          const x = lineItems[0].transform[4];
+          // Prepare the canvases
+          const jobs = [];
+          for (const pi of ocrPages) {
+            if (onProgressUpdate) onProgressUpdate(`Rendering page ${pi.p}/${numPages} for OCR…`, 8);
+            const ocrVp = pi.page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = ocrVp.width;
+            canvas.height = ocrVp.height;
+            await pi.page.render({ canvasContext: ctx, viewport: ocrVp }).promise;
 
-          // Determine dominant font style by majority vote across the line's items
-          const styleVotes = { bold: 0, italic: 0, underline: 0, strikethrough: 0, total: 0 };
-          for (const item of lineItems) {
-            const s = detectFontStyle(item.fontName);
-            if (s.bold) styleVotes.bold++;
-            if (s.italic) styleVotes.italic++;
-            if (s.underline) styleVotes.underline++;
-            if (s.strikethrough) styleVotes.strikethrough++;
-            styleVotes.total++;
+            jobs.push({
+              canvas,
+              onComplete: (result) => {
+                completedJobs++;
+                log(`Page ${pi.p} OCR completed by worker. Found ${result.data.lines?.length || 0} lines.`, 'ok');
+                
+                if (result.data && result.data.lines) {
+                  for (const ocrLine of result.data.lines) {
+                    const text = ocrLine.text?.replace(/\s+/g, ' ').trim();
+                    if (!text) continue;
+                    if (/^[\s\u2013\u2014-]*\d{1,4}[\s\u2013\u2014-]*$/.test(text)) continue;
+
+                    const box = ocrLine.bbox;
+                    const x = box.x0 / 2.0;
+                    const y = pi.pgH - (box.y1 / 2.0);
+                    const w = (box.x1 - box.x0) / 2.0;
+                    const h = (box.y1 - box.y0) / 2.0;
+                    const fz = Math.round(h * 0.75 * 10) / 10;
+
+                    const isBold = ocrLine.words?.some(w => w.is_bold) || false;
+                    const isItalic = ocrLine.words?.some(w => w.is_italic) || false;
+
+                    const fontStyle = {
+                      bold: isBold,
+                      italic: isItalic,
+                      underline: false,
+                      strikethrough: false,
+                      raw: ocrLine.words?.[0]?.font_name || '',
+                    };
+
+                    pi.lines.push({ y, x, w, h, fz, text, fontStyle, pgW: pi.pgW, pgH: pi.pgH });
+                    if (!shouldSkip(text) && fz >= 6 && fz <= 72) allFontSizes.push(fz);
+                  }
+                }
+              },
+              onError: (err) => {
+                completedJobs++;
+                log(`Page ${pi.p} OCR failed: ${err.message}. Falling back to standard parser.`, 'w');
+                pi.runOcr = false;
+              }
+            });
           }
-          const threshold = Math.max(styleVotes.total * 0.4, 1);
-          const fontStyle = {
-            bold: styleVotes.bold >= threshold,
-            italic: styleVotes.italic >= threshold,
-            underline: styleVotes.underline >= threshold,
-            strikethrough: styleVotes.strikethrough >= threshold,
-            raw: lineItems[0].fontName || '',
-          };
 
-          const w = lineItems.length > 0 ? (lineItems[lineItems.length - 1].transform[4] + lineItems[lineItems.length - 1].width - lineItems[0].transform[4]) : 0;
-          const h = fz;
-          lines.push({ y, x, w, h, fz, text, fontStyle, pgW, pgH });
-          if (!shouldSkip(text) && fz >= 6 && fz <= 72) allFontSizes.push(fz);
+          log(`Scheduling ${jobs.length} page recognition tasks across the pool...`, 'i');
+          await pool.runOcr(jobs);
+
+        } finally {
+          await pool.terminate();
+        }
+      }
+
+      // Process standard extraction for non-OCR pages, and apply the 2D layout parser
+      for (const pi of pageInfo) {
+        if (!pi.runOcr) {
+          const headerZoneY = pi.pgH * 0.91;
+          const footerZoneY = pi.pgH * 0.09;
+
+          const lineMap = new Map();
+          for (const item of pi.rawItems) {
+            const itemY = item.transform[5];
+            if (itemY > headerZoneY || itemY < footerZoneY) continue;
+
+            const y = Math.round(itemY);
+            let key = null;
+            for (const k of lineMap.keys()) { if (Math.abs(k - y) < 3) { key = k; break; } }
+            if (key === null) { key = y; lineMap.set(key, []); }
+            lineMap.get(key).push(item);
+          }
+
+          for (const [y, lineItems] of lineMap) {
+            lineItems.sort((a, b) => a.transform[4] - b.transform[4]);
+
+            let text = '';
+            for (let i = 0; i < lineItems.length; i++) {
+              if (i > 0 && lineItems[i - 1].hasEOL) {
+                text += ' ';
+              } else if (i > 0) {
+                const gap = lineItems[i].transform[4] - (lineItems[i - 1].transform[4] + lineItems[i - 1].width);
+                if (gap > lineItems[i - 1].width * 0.3) text += ' ';
+              }
+              text += lineItems[i].str;
+            }
+            text = text.replace(/\s+/g, ' ').trim();
+            if (!text) continue;
+            if (/^[\s\u2013\u2014-]*\d{1,4}[\s\u2013\u2014-]*$/.test(text)) continue;
+
+            const fz = Math.round(Math.max(Math.abs(lineItems[0].transform[0]), Math.abs(lineItems[0].transform[3]), 6) * 10) / 10;
+            const x = lineItems[0].transform[4];
+
+            const styleVotes = { bold: 0, italic: 0, underline: 0, strikethrough: 0, total: 0 };
+            for (const item of lineItems) {
+              const s = detectFontStyle(item.fontName);
+              if (s.bold) styleVotes.bold++;
+              if (s.italic) styleVotes.italic++;
+              if (s.underline) styleVotes.underline++;
+              if (s.strikethrough) styleVotes.strikethrough++;
+              styleVotes.total++;
+            }
+            const threshold = Math.max(styleVotes.total * 0.4, 1);
+            const fontStyle = {
+              bold: styleVotes.bold >= threshold,
+              italic: styleVotes.italic >= threshold,
+              underline: styleVotes.underline >= threshold,
+              strikethrough: styleVotes.strikethrough >= threshold,
+              raw: lineItems[0].fontName || '',
+            };
+
+            const w = lineItems.length > 0 ? (lineItems[lineItems.length - 1].transform[4] + lineItems[lineItems.length - 1].width - lineItems[0].transform[4]) : 0;
+            const h = fz;
+            pi.lines.push({ y, x, w, h, fz, text, fontStyle, pgW: pi.pgW, pgH: pi.pgH });
+            if (!shouldSkip(text) && fz >= 6 && fz <= 72) allFontSizes.push(fz);
+          }
         }
 
-        lines.sort((a, b) => b.y - a.y); // top-to-bottom reading order
-
-        // Detect the dominant left margin (body text x position) via binning
+        // Apply 2D Layout Column Parser
+        const lines = pi.lines;
+        
+        // Mark centered lines
+        lines.sort((a, b) => b.y - a.y);
         const xBins = {};
         for (const ln of lines) { const bin = Math.round(ln.x / 4) * 4; xBins[bin] = (xBins[bin] || 0) + 1; }
         const dominantX = Number(Object.entries(xBins).sort((a, b) => b[1] - a[1])[0]?.[0] || 54);
-
-        // Classify centered lines (chapter titles, epigraphs) vs indented body text.
-        // Rule: xMin > pgW*0.22 AND indent > 55pt from body margin AND ≤15 words.
         for (const ln of lines) {
           const indentOffset = ln.x - dominantX;
           ln.isCentered = (ln.x > ln.pgW * 0.22) && (indentOffset > 55) && ln.text.split(/ +/).length <= 15;
           ln.dominantX = dominantX;
         }
 
-        allPageData.push({ lines, pgW, pgH });
+        // Detect if this page is a multi-column page (has side-by-side content)
+        const bodyLines = lines.filter(l => !l.isCentered);
+        let sideBySideCount = 0;
+        for (let i = 0; i < bodyLines.length; i++) {
+          for (let j = i + 1; j < bodyLines.length; j++) {
+            const a = bodyLines[i];
+            const b = bodyLines[j];
+            const yOverlap = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+            if (yOverlap > Math.min(a.h, b.h) * 0.4) {
+              const hGap = Math.max(a.x, b.x) - Math.min(a.x + a.w, b.x + b.w);
+              if (hGap > 15) sideBySideCount++;
+            }
+          }
+        }
+
+        let sortedLines = [];
+        if (sideBySideCount >= 2) {
+          log(`Page ${pi.p}: Multi-column layout detected (${sideBySideCount} side-by-side overlaps). Segmenting columns...`, 'i');
+          const midX = pi.pgW / 2;
+          const leftCol = [];
+          const rightCol = [];
+          const centeredLines = [];
+
+          for (const ln of lines) {
+            if (ln.isCentered) {
+              centeredLines.push(ln);
+            } else if (ln.x + ln.w * 0.35 < midX) {
+              leftCol.push(ln);
+            } else {
+              rightCol.push(ln);
+            }
+          }
+
+          // Sort each set top-to-bottom
+          leftCol.sort((a, b) => b.y - a.y);
+          rightCol.sort((a, b) => b.y - a.y);
+          centeredLines.sort((a, b) => b.y - a.y);
+
+          // Place centered headers on top, followed by left column, then right column
+          sortedLines = [...centeredLines.filter(l => l.y > pi.pgH * 0.8), ...leftCol, ...rightCol, ...centeredLines.filter(l => l.y <= pi.pgH * 0.8)];
+        } else {
+          sortedLines = [...lines];
+          sortedLines.sort((a, b) => b.y - a.y);
+        }
+
+        allPageData.push({ lines: sortedLines, pgW: pi.pgW, pgH: pi.pgH });
       }
 
       allFontSizes.sort((a, b) => a - b);
@@ -2027,14 +2928,13 @@
      * 3. Very short lines (≤3 words, no sentence-ending punctuation) are always
      *    merged into the current paragraph to handle stray words.
      */
-    function buildParagraphs(allPageData, medianFz) {
+        function buildParagraphs(allPageData, medianFz) {
       const paragraphs = [];
       let current = null;
       let lastLineText = ''; // text of the most recently appended line (not the whole para)
       let prevLine = null;
 
       const SENTENCE_END_RE = /[.!?\u2026\u00bb\u201d)\]:]$/;
-      const SHORT_LINE_RE = /^\S+(\s+\S+){0,2}$/; // 1–3 words
 
       function flushParagraph() {
         if (current && current.text.trim()) {
@@ -2057,6 +2957,11 @@
       for (let pi = 0; pi < allPageData.length; pi++) {
         const pageData = allPageData[pi];
         prevLine = null;
+        
+        // Detect column layout to establish the correct line width reference
+        const hasRightCol = pageData.lines.some(l => l.x > pageData.pgW * 0.45 && !l.isCentered);
+        const colWidth = hasRightCol ? (pageData.pgW * 0.5) : pageData.pgW;
+
         for (let li = 0; li < pageData.lines.length; li++) {
           const ln = pageData.lines[li];
           if (!ln.text?.trim()) continue;
@@ -2074,14 +2979,18 @@
             yGapRatio = 1.0;
           }
 
-          const isShortFragment = !isHeading && SHORT_LINE_RE.test(ln.text.trim()) && !SENTENCE_END_RE.test(ln.text.trim());
+          // A line is considered short if it ends early, meaning it marks the end of a block/paragraph.
+          // This prevents header/address segments (which are short lines) from being merged into standard prose.
+          const prevLineIsShort = prevLine && (prevLine.w < colWidth * 0.5) && !/[-\u2011]$/.test(prevLine.text.trimEnd());
+
           const bigGap = yGapRatio > 1.55;
           const lastEndsSentence = SENTENCE_END_RE.test(lastLineText.trimEnd());
           const prevEndsSentence = current && lastEndsSentence && yGapRatio > 0.85;
           const prevWasHeading = current && current.isHeading;
-          const shouldStartNew = !current || isHeading || (bigGap && !isShortFragment) || prevEndsSentence || prevWasHeading;
+          
+          const shouldStartNew = !current || isHeading || bigGap || prevEndsSentence || prevWasHeading || prevLineIsShort;
 
-          if (shouldStartNew && !isShortFragment) {
+          if (shouldStartNew) {
             flushParagraph();
             current = {
               text: ln.text,
@@ -2127,9 +3036,29 @@
      */
     async function renderTranslatedPdf(origBytes, paragraphs, medianFz, translationMap, targetLang) {
       const { PDFDocument, rgb, StandardFonts } = await import('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.esm.js');
+      await import('https://cdn.jsdelivr.net/npm/regenerator-runtime@0.14.1/runtime.js');
+      let fontkit;
+      try {
+        const fkModule = await import('https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/+esm');
+        fontkit = fkModule.default || fkModule.fontkit || fkModule;
+      } catch (e) {
+        log(`ESM fontkit loading failed: ${e.message}. Trying UMD fallback...`, 'w');
+      }
 
+      if (!fontkit && !window.fontkit) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+      
+      const fkInstance = fontkit || window.fontkit;
       const origDoc = await PDFDocument.load(origBytes.slice().buffer);
       const outDoc = await PDFDocument.create();
+      outDoc.registerFontkit(fkInstance);
 
       // Copy pages from original document to preserve background layout, images, and drawings
       const copiedPages = await outDoc.copyPages(origDoc, origDoc.getPageIndices());
@@ -2141,6 +3070,7 @@
 
       // Resolve translations — fall back to original text if no translation available
       const resolvedParas = paragraphs.map(para => {
+        if (para.displayText !== undefined) return para;
         const translated = shouldSkip(para.text) ? null : (translationMap[para.text] || null);
         return { ...para, displayText: (translated?.trim()) || para.text };
       });
@@ -2159,16 +3089,18 @@
         const bw = para.w;
         const bh = para.h;
 
-        // Draw a solid white rectangle to cover the original text
+        // Draw a solid white rectangle to cover the original text lines individually
         // (with a small padding to cover descenders/ascenders)
         const pad = Math.max(para.origFz * 0.15, 2);
-        page.drawRectangle({
-          x: bx - pad,
-          y: by - pad,
-          width: bw + pad * 2,
-          height: bh + pad * 2,
-          color: rgb(1, 1, 1), // assume white background for text cover
-        });
+        for (const ln of para.lines) {
+          page.drawRectangle({
+            x: ln.x - pad,
+            y: ln.y - pad,
+            width: ln.w + pad * 2,
+            height: ln.h + pad * 2,
+            color: rgb(1, 1, 1), // assume white background for text cover
+          });
+        }
 
         // Determine font size
         let fz = para.origFz;
@@ -2246,6 +3178,7 @@
       if (ext === 'pdf') return '📄';
       if (['docx', 'doc', 'odt'].includes(ext)) return '📝';
       if (ext === 'epub') return '📖';
+      if (['png', 'jpg', 'jpeg'].includes(ext)) return '🖼️';
       return '📃';
     }
 
@@ -2303,11 +3236,538 @@
     function setRowDownloadActions(id, blobs) {
       const el = document.getElementById('act-' + id);
       if (!el) return;
-      el.innerHTML = blobs.map((b, i) => {
+      let html = blobs.map((b, i) => {
         const url = URL.createObjectURL(b.blob);
         return `<a class="download-btn${i > 0 ? ' alt' : ''}" href="${url}" download="${b.name}">${b.label}</a>`;
       }).join('');
+
+      const isPreviewable = blobs.some(b => /\.(pdf|png|jpg|jpeg)$/i.test(b.name));
+      if (isPreviewable) {
+        html = `<button class="download-btn preview-btn" style="background:rgba(108,92,231,0.15); border:1px dashed var(--ac); color:var(--ac2); font-family:var(--sans); cursor:pointer; margin-right:6px;" onclick="showPreviewModal('${id}')">👁️ Preview</button>` + html;
+      }
+      el.innerHTML = html;
     }
+
+    // ── Preview & Layout Editor State ──────────────────────────────────────────
+    let activePreviewItemId = null;
+    let activePreviewPageNum = 1;
+    let activePreviewPageCount = 1;
+    let selectedParaIdx = null;
+    let editorModeEnabled = false;
+
+    async function showPreviewModal(itemId) {
+      const item = fileQueue.find(q => q.id === itemId);
+      if (!item) return;
+      
+      activePreviewItemId = itemId;
+      activePreviewPageNum = 1;
+      selectedParaIdx = null;
+      editorModeEnabled = false;
+
+      const ext = item.file.name.split('.').pop().toLowerCase();
+      const isImage = ['png', 'jpg', 'jpeg'].includes(ext);
+
+      activePreviewPageCount = isImage ? 1 : (item.numPages || 1);
+
+      const modal = document.getElementById('previewModal');
+      modal.classList.add('active');
+
+      const content = document.getElementById('previewContent');
+      content.style.maxWidth = '800px';
+
+      document.getElementById('editorModeToggle').checked = false;
+      document.getElementById('editorSidebar').style.display = 'none';
+      deselectPara();
+
+      const pageSelector = document.getElementById('pageSelectorContainer');
+      if (!isImage && activePreviewPageCount > 1) {
+        pageSelector.style.display = 'flex';
+        document.getElementById('pageIndicator').textContent = `Page 1 / ${activePreviewPageCount}`;
+      } else {
+        pageSelector.style.display = 'none';
+      }
+
+      await renderPreviewPage(itemId, 1);
+    }
+
+    function closePreviewModal() {
+      document.getElementById('previewModal').classList.remove('active');
+      document.getElementById('sliderContainer').innerHTML = '';
+      activePreviewItemId = null;
+      selectedParaIdx = null;
+    }
+
+    async function renderPreviewPage(itemId, pageNum = 1) {
+      const item = fileQueue.find(q => q.id === itemId);
+      if (!item) return;
+
+      const container = document.getElementById('sliderContainer');
+      container.innerHTML = '<span style="color:var(--mu);font-family:var(--mono);font-size:0.75rem;">Loading preview…</span>';
+      
+      const ext = item.file.name.split('.').pop().toLowerCase();
+      const isImage = ['png', 'jpg', 'jpeg'].includes(ext);
+
+      try {
+        if (isImage) {
+          if (!item.blobs || item.blobs.length < 2) {
+            throw new Error('Image blobs not prepared');
+          }
+          const origBlob = item.blobs[1].blob;
+          const transBlob = item.blobs[0].blob;
+
+          const origImg = new Image();
+          const origUrl = URL.createObjectURL(origBlob);
+          await new Promise((resolve, reject) => {
+            origImg.onload = resolve;
+            origImg.onerror = reject;
+            origImg.src = origUrl;
+          });
+
+          const transImg = new Image();
+          const transUrl = URL.createObjectURL(transBlob);
+          await new Promise((resolve, reject) => {
+            transImg.onload = resolve;
+            transImg.onerror = reject;
+            transImg.src = transUrl;
+          });
+
+          const containerArea = document.getElementById('previewContainer');
+          const scale = Math.min(1.0, (containerArea.clientWidth - 30) / origImg.width);
+          const w = Math.round(origImg.width * scale);
+          const h = Math.round(origImg.height * scale);
+
+          container.style.width = `${w}px`;
+          container.style.height = `${h}px`;
+          container.innerHTML = '';
+
+          const canvasOrig = document.createElement('canvas');
+          canvasOrig.className = 'slider-layer';
+          canvasOrig.width = w;
+          canvasOrig.height = h;
+          canvasOrig.style.width = `${w}px`;
+          canvasOrig.style.height = `${h}px`;
+          const ctxOrig = canvasOrig.getContext('2d');
+          ctxOrig.drawImage(origImg, 0, 0, w, h);
+          container.appendChild(canvasOrig);
+
+          const topWrap = document.createElement('div');
+          topWrap.className = 'slider-top-wrap';
+          topWrap.style.width = editorModeEnabled ? '100%' : '50%';
+
+          const canvasTrans = document.createElement('canvas');
+          canvasTrans.style.position = 'absolute';
+          canvasTrans.style.top = '0';
+          canvasTrans.style.left = '0';
+          canvasTrans.width = w;
+          canvasTrans.height = h;
+          canvasTrans.style.width = `${w}px`;
+          canvasTrans.style.height = `${h}px`;
+          const ctxTrans = canvasTrans.getContext('2d');
+          ctxTrans.drawImage(transImg, 0, 0, w, h);
+          topWrap.appendChild(canvasTrans);
+
+          const handle = document.createElement('div');
+          handle.className = 'slider-handle';
+          handle.innerHTML = '◀▶';
+          if (editorModeEnabled) handle.style.display = 'none';
+          topWrap.appendChild(handle);
+
+          container.appendChild(topWrap);
+
+          setupComparisonSlider(container, topWrap, w);
+
+          if (editorModeEnabled) {
+            setupEditorOverlay(item, scale, h);
+          }
+        } else {
+          // Render PDF
+          const pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+
+          const transBytes = new Uint8Array(await item.blobs[0].blob.arrayBuffer());
+          
+          const origDoc = await pdfjsLib.getDocument({ data: item.origBytes.slice() }).promise;
+          const transDoc = await pdfjsLib.getDocument({ data: transBytes }).promise;
+          
+          const origPage = await origDoc.getPage(pageNum);
+          const transPage = await transDoc.getPage(pageNum);
+          
+          const scale = 1.35;
+          const vpOrig = origPage.getViewport({ scale });
+          const w = vpOrig.width;
+          const h = vpOrig.height;
+          
+          container.style.width = `${w}px`;
+          container.style.height = `${h}px`;
+          container.innerHTML = '';
+          
+          const canvasOrig = document.createElement('canvas');
+          canvasOrig.className = 'slider-layer';
+          canvasOrig.width = w;
+          canvasOrig.height = h;
+          const ctxOrig = canvasOrig.getContext('2d');
+          await origPage.render({ canvasContext: ctxOrig, viewport: vpOrig }).promise;
+          container.appendChild(canvasOrig);
+          
+          const topWrap = document.createElement('div');
+          topWrap.className = 'slider-top-wrap';
+          topWrap.style.width = editorModeEnabled ? '100%' : '50%';
+          
+          const canvasTrans = document.createElement('canvas');
+          canvasTrans.style.position = 'absolute';
+          canvasTrans.style.top = '0';
+          canvasTrans.style.left = '0';
+          canvasTrans.width = w;
+          canvasTrans.height = h;
+          canvasTrans.style.width = `${w}px`;
+          canvasTrans.style.height = `${h}px`;
+          
+          const ctxTrans = canvasTrans.getContext('2d');
+          await transPage.render({ canvasContext: ctxTrans, viewport: vpOrig }).promise;
+          topWrap.appendChild(canvasTrans);
+          
+          const handle = document.createElement('div');
+          handle.className = 'slider-handle';
+          handle.innerHTML = '◀▶';
+          if (editorModeEnabled) handle.style.display = 'none';
+          topWrap.appendChild(handle);
+          
+          container.appendChild(topWrap);
+
+          setupComparisonSlider(container, topWrap, w);
+
+          if (editorModeEnabled) {
+            setupEditorOverlay(item, scale, h);
+          }
+        }
+      } catch (err) {
+        container.innerHTML = `<span style="color:var(--rd);font-family:var(--mono);font-size:0.75rem;">Failed to load preview: ${err.message}</span>`;
+      }
+    }
+
+    function setupComparisonSlider(container, topWrap, w) {
+      if (editorModeEnabled) {
+        container.onmousemove = null;
+        container.ontouchmove = null;
+        container.style.cursor = 'default';
+        return;
+      }
+      
+      container.style.cursor = 'ew-resize';
+      const updateSlider = (clientX) => {
+        const rect = container.getBoundingClientRect();
+        let x = clientX - rect.left;
+        if (x < 0) x = 0;
+        if (x > w) x = w;
+        const pct = (x / w) * 100;
+        topWrap.style.width = `${pct}%`;
+      };
+      
+      container.onmousemove = (e) => {
+        updateSlider(e.clientX);
+      };
+      container.ontouchmove = (e) => {
+        if (e.touches && e.touches[0]) {
+          updateSlider(e.touches[0].clientX);
+        }
+      };
+    }
+
+    function setupEditorOverlay(item, scale, containerHeight) {
+      document.getElementById('editorOverlay')?.remove();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'editorOverlay';
+      overlay.className = 'editor-overlay';
+      overlay.style.position = 'absolute';
+      overlay.style.inset = '0';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.zIndex = '20';
+      
+      const container = document.getElementById('sliderContainer');
+      container.appendChild(overlay);
+
+      const ext = item.file.name.split('.').pop().toLowerCase();
+      const isImage = ['png', 'jpg', 'jpeg'].includes(ext);
+      
+      const targetPageIndex = activePreviewPageNum - 1;
+
+      let pgH = containerHeight / scale;
+      const firstParaOnPage = item.paragraphs.find(p => isImage || p.pageIndex === targetPageIndex);
+      if (firstParaOnPage && firstParaOnPage.lines?.[0]?.pgH) {
+        pgH = firstParaOnPage.lines[0].pgH;
+      }
+
+      item.paragraphs.forEach((para, idx) => {
+        if (!isImage && para.pageIndex !== targetPageIndex) return;
+
+        const left = para.x * scale;
+        const top = (pgH - para.y - para.h) * scale;
+        const width = para.w * scale;
+        const height = para.h * scale;
+
+        const box = document.createElement('div');
+        box.className = 'editor-box' + (selectedParaIdx === idx ? ' active' : '');
+        box.style.left = `${left}px`;
+        box.style.top = `${top}px`;
+        box.style.width = `${width}px`;
+        box.style.height = `${height}px`;
+        box.style.pointerEvents = 'auto';
+        box.title = `Block ${idx + 1}: Click to edit`;
+
+        box.onclick = (e) => {
+          e.stopPropagation();
+          selectParagraph(idx);
+        };
+
+        overlay.appendChild(box);
+      });
+    }
+
+    function selectParagraph(idx) {
+      selectedParaIdx = idx;
+      
+      const overlay = document.getElementById('editorOverlay');
+      if (overlay) {
+        const children = overlay.children;
+        const item = fileQueue.find(q => q.id === activePreviewItemId);
+        let currentPageIndex = activePreviewPageNum - 1;
+        const ext = item.file.name.split('.').pop().toLowerCase();
+        const isImage = ['png', 'jpg', 'jpeg'].includes(ext);
+
+        let childIdx = 0;
+        item.paragraphs.forEach((para, pIdx) => {
+          if (!isImage && para.pageIndex !== currentPageIndex) return;
+          const box = children[childIdx];
+          if (box) {
+            if (pIdx === idx) {
+              box.classList.add('active');
+            } else {
+              box.classList.remove('active');
+            }
+          }
+          childIdx++;
+        });
+      }
+
+      const item = fileQueue.find(q => q.id === activePreviewItemId);
+      const para = item.paragraphs[idx];
+
+      document.getElementById('editorPrompt').style.display = 'none';
+      document.getElementById('editorFields').style.display = 'flex';
+
+      document.getElementById('editOrigText').textContent = para.text;
+      
+      const translatedVal = para.displayText !== undefined ? para.displayText : (item.polishedMap[para.text] || para.text);
+      const txtArea = document.getElementById('editTransText');
+      txtArea.value = translatedVal;
+      document.getElementById('editCharCount').textContent = translatedVal.length;
+
+      document.getElementById('editFontSize').value = para.origFz;
+      
+      updateStyleButtonStates(para);
+
+      let pgW = 612;
+      let pgH = 792;
+      if (para.lines?.[0]) {
+        pgW = para.lines[0].pgW;
+        pgH = para.lines[0].pgH;
+      }
+
+      setupSlider('sliderX', 'valX', para.x, 0, pgW);
+      setupSlider('sliderY', 'valY', para.y, 0, pgH);
+      setupSlider('sliderW', 'valW', para.w, 10, pgW);
+      setupSlider('sliderH', 'valH', para.h, 5, pgH);
+    }
+
+    function updateStyleButtonStates(para) {
+      const boldBtn = document.getElementById('btnEditBold');
+      const italicBtn = document.getElementById('btnEditItalic');
+      const centeredBtn = document.getElementById('btnEditCentered');
+
+      boldBtn.style.background = para.fontStyle?.bold ? 'var(--ac)' : 'var(--bg)';
+      boldBtn.style.color = para.fontStyle?.bold ? 'var(--tx)' : 'var(--tx)';
+      italicBtn.style.background = para.fontStyle?.italic ? 'var(--ac)' : 'var(--bg)';
+      italicBtn.style.color = para.fontStyle?.italic ? 'var(--tx)' : 'var(--tx)';
+      centeredBtn.style.background = para.isCentered ? 'var(--ac)' : 'var(--bg)';
+      centeredBtn.style.color = para.isCentered ? 'var(--tx)' : 'var(--tx)';
+    }
+
+    function setupSlider(sliderId, valId, val, min, max) {
+      const slider = document.getElementById(sliderId);
+      const display = document.getElementById(valId);
+      slider.min = Math.floor(min);
+      slider.max = Math.ceil(max);
+      slider.value = Math.round(val);
+      display.textContent = Math.round(val);
+    }
+
+    function deselectPara() {
+      selectedParaIdx = null;
+      const promptEl = document.getElementById('editorPrompt');
+      const fieldsEl = document.getElementById('editorFields');
+      if (promptEl) promptEl.style.display = 'block';
+      if (fieldsEl) fieldsEl.style.display = 'none';
+      
+      const boxes = document.querySelectorAll('.editor-box');
+      boxes.forEach(box => box.classList.remove('active'));
+    }
+
+    window.deselectPara = deselectPara;
+
+    window.onParaTextInput = () => {
+      const val = document.getElementById('editTransText').value;
+      document.getElementById('editCharCount').textContent = val.length;
+      if (selectedParaIdx !== null) {
+        const item = fileQueue.find(q => q.id === activePreviewItemId);
+        item.paragraphs[selectedParaIdx].displayText = val;
+      }
+    };
+
+    window.onParaSizeInput = () => {
+      const val = parseFloat(document.getElementById('editFontSize').value) || 10;
+      if (selectedParaIdx !== null) {
+        const item = fileQueue.find(q => q.id === activePreviewItemId);
+        item.paragraphs[selectedParaIdx].origFz = val;
+      }
+    };
+
+    window.toggleParaStyle = (styleType) => {
+      if (selectedParaIdx === null) return;
+      const item = fileQueue.find(q => q.id === activePreviewItemId);
+      const para = item.paragraphs[selectedParaIdx];
+      if (!para.fontStyle) para.fontStyle = {};
+
+      if (styleType === 'bold') {
+        para.fontStyle.bold = !para.fontStyle.bold;
+      } else if (styleType === 'italic') {
+        para.fontStyle.italic = !para.fontStyle.italic;
+      } else if (styleType === 'centered') {
+        para.isCentered = !para.isCentered;
+      }
+      updateStyleButtonStates(para);
+    };
+
+    window.onParaPosSlider = (type) => {
+      if (selectedParaIdx === null) return;
+      const item = fileQueue.find(q => q.id === activePreviewItemId);
+      const para = item.paragraphs[selectedParaIdx];
+      
+      const slider = document.getElementById('slider' + type.toUpperCase());
+      const display = document.getElementById('val' + type.toUpperCase());
+      const val = parseFloat(slider.value);
+      display.textContent = Math.round(val);
+
+      para[type] = val;
+
+      const container = document.getElementById('sliderContainer');
+      const canvas = container.querySelector('canvas');
+      if (!canvas) return;
+
+      let pgW = canvas.width;
+      if (para.lines?.[0]) {
+        pgW = para.lines[0].pgW;
+      }
+      const scale = canvas.width / pgW;
+      
+      let pgH = canvas.height / scale;
+      if (para.lines?.[0]) {
+        pgH = para.lines[0].pgH;
+      }
+
+      const left = para.x * scale;
+      const top = (pgH - para.y - para.h) * scale;
+      const width = para.w * scale;
+      const height = para.h * scale;
+
+      const overlay = document.getElementById('editorOverlay');
+      if (overlay) {
+        const activeBox = overlay.querySelector('.editor-box.active');
+        if (activeBox) {
+          activeBox.style.left = `${left}px`;
+          activeBox.style.top = `${top}px`;
+          activeBox.style.width = `${width}px`;
+          activeBox.style.height = `${height}px`;
+        }
+      }
+    };
+
+    window.applyParaChangesAndReRender = async () => {
+      if (!activePreviewItemId) return;
+      const item = fileQueue.find(q => q.id === activePreviewItemId);
+      if (!item) return;
+
+      const statusEl = document.getElementById('reRenderStatus');
+      const btn = document.getElementById('applyReRenderBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin"></span> Rendering…';
+      statusEl.textContent = 'Generating layout...';
+
+      try {
+        const ext = item.file.name.split('.').pop().toLowerCase();
+        const isImage = ['png', 'jpg', 'jpeg'].includes(ext);
+
+        if (isImage) {
+          await reRenderImage(item);
+        } else {
+          const polishedMap = postProcessTranslations(item.polishedMap || item.translationMap || {}, item.srcLang || 'auto', item.tgtLang || 'en');
+          const outBytes = await renderTranslatedPdf(item.origBytes, item.paragraphs, item.medianFz, polishedMap, item.tgtLang);
+          item.outBytes = outBytes;
+          
+          const baseName = item.file.name.replace(/\.pdf$/i, '');
+          item.blobs[0] = {
+            blob: new Blob([outBytes], { type: 'application/pdf' }),
+            name: baseName + '_translated.pdf',
+            label: '⬇ Translated'
+          };
+          setRowDownloadActions(item.id, item.blobs);
+        }
+        
+        statusEl.textContent = 'Refreshing preview...';
+        await renderPreviewPage(activePreviewItemId, activePreviewPageNum);
+        statusEl.textContent = '✓ Updated successfully!';
+        setTimeout(() => { statusEl.textContent = ''; }, 2500);
+      } catch (err) {
+        statusEl.textContent = '✗ Error: ' + err.message;
+        log('Re-render failed: ' + err.message, 'e');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Apply & Re-render';
+      }
+    };
+
+    window.changePreviewPage = async (offset) => {
+      let newPage = activePreviewPageNum + offset;
+      if (newPage < 1 || newPage > activePreviewPageCount) return;
+      
+      activePreviewPageNum = newPage;
+      document.getElementById('pageIndicator').textContent = `Page ${newPage} / ${activePreviewPageCount}`;
+      deselectPara();
+      await renderPreviewPage(activePreviewItemId, newPage);
+    };
+
+    window.toggleEditorMode = async () => {
+      const checkbox = document.getElementById('editorModeToggle');
+      editorModeEnabled = checkbox.checked;
+
+      const content = document.getElementById('previewContent');
+      const sidebar = document.getElementById('editorSidebar');
+
+      if (editorModeEnabled) {
+        content.style.maxWidth = '1150px';
+        sidebar.style.display = 'flex';
+        deselectPara();
+      } else {
+        content.style.maxWidth = '800px';
+        sidebar.style.display = 'none';
+        deselectPara();
+      }
+
+      await renderPreviewPage(activePreviewItemId, activePreviewPageNum);
+    };
+
+    window.showPreviewModal = showPreviewModal;
+    window.closePreviewModal = closePreviewModal;
 
     function updateQueueSummary() {
       const total = fileQueue.length;
@@ -2376,6 +3836,7 @@
         const ext = item.file.name.split('.').pop().toLowerCase();
         try {
           if (ext === 'pdf') await processPdfFile(item, srcLang, tgtLang);
+          else if (['png', 'jpg', 'jpeg'].includes(ext)) await processImageFile(item, srcLang, tgtLang);
           else await processDocumentFile(item, srcLang, tgtLang);
           item.status = 'done';
           setRowStatus(item.id, 'done');
@@ -2534,7 +3995,360 @@
       if (newPairs.length) TranslationCache.setMany(newPairs, srcLang, tgtLang);
       if (onProgress) onProgress(uniqueTexts.length, uniqueTexts.length);
       log(`Context-translate done: ${Object.keys(xlMap).length}/${uniqueTexts.length}`, 'ok');
+      
+      // Apply glossary override rules directly to all translated values
+      for (const key of Object.keys(xlMap)) {
+        xlMap[key] = applyGlossaryDirect(xlMap[key]);
+      }
       return xlMap;
+    }
+
+    // ── Image Background & Text Color Sampler ──────────────────────────────
+    function sampleBackgroundColor(ctx, x, y, w, h, imgWidth, imgHeight) {
+      const border = 4;
+      const colors = [];
+      
+      const addPixel = (px, py) => {
+        if (px < 0 || px >= imgWidth || py < 0 || py >= imgHeight) return;
+        const [r, g, b, a] = ctx.getImageData(px, py, 1, 1).data;
+        if (a > 10) {
+          colors.push((r << 16) | (g << 8) | b);
+        }
+      };
+
+      for (let px = Math.max(0, x - border); px < Math.min(imgWidth, x + w + border); px += 2) {
+        for (let py = Math.max(0, y - border); py < Math.max(0, y); py++) {
+          addPixel(px, py);
+        }
+      }
+      for (let px = Math.max(0, x - border); px < Math.min(imgWidth, x + w + border); px += 2) {
+        for (let py = Math.min(imgHeight - 1, y + h); py < Math.min(imgHeight, y + h + border); py++) {
+          addPixel(px, py);
+        }
+      }
+      for (let py = Math.max(0, y); py < Math.min(imgHeight, y + h); py += 2) {
+        for (let px = Math.max(0, x - border); px < Math.max(0, x); px++) {
+          addPixel(px, py);
+        }
+      }
+      for (let py = Math.max(0, y); py < Math.min(imgHeight, y + h); py += 2) {
+        for (let px = Math.min(imgWidth - 1, x + w); px < Math.min(imgWidth, x + w + border); px++) {
+          addPixel(px, py);
+        }
+      }
+
+      if (colors.length === 0) return 'rgb(255,255,255)';
+
+      const counts = {};
+      let maxColor = colors[0];
+      let maxCount = 0;
+      for (const col of colors) {
+        counts[col] = (counts[col] || 0) + 1;
+        if (counts[col] > maxCount) {
+          maxColor = col;
+          maxCount = counts[col];
+        }
+      }
+
+      const r = (maxColor >> 16) & 0xff;
+      const g = (maxColor >> 8) & 0xff;
+      const b = maxColor & 0xff;
+      return `rgb(${r},${g},${b})`;
+    }
+
+    function sampleTextColor(ctx, x, y, w, h, bgRgbStr) {
+      const match = bgRgbStr.match(/\d+/g);
+      const bgR = match ? parseInt(match[0]) : 255;
+      const bgG = match ? parseInt(match[1]) : 255;
+      const bgB = match ? parseInt(match[2]) : 255;
+
+      const stepX = Math.max(1, Math.floor(w / 15));
+      const stepY = Math.max(1, Math.floor(h / 15));
+      const colors = [];
+
+      for (let px = Math.max(0, x); px < Math.min(ctx.canvas.width, x + w); px += stepX) {
+        for (let py = Math.max(0, y); py < Math.min(ctx.canvas.height, y + h); py += stepY) {
+          const [r, g, b, a] = ctx.getImageData(px, py, 1, 1).data;
+          if (a > 10) {
+            const dist = Math.abs(r - bgR) + Math.abs(g - bgG) + Math.abs(b - bgB);
+            colors.push({ r, g, b, dist });
+          }
+        }
+      }
+
+      if (colors.length === 0) return 'rgb(0,0,0)';
+
+      colors.sort((a, b) => b.dist - a.dist);
+
+      const topCount = Math.max(1, Math.floor(colors.length * 0.1));
+      let sumR = 0, sumG = 0, sumB = 0;
+      for (let i = 0; i < topCount; i++) {
+        sumR += colors[i].r;
+        sumG += colors[i].g;
+        sumB += colors[i].b;
+      }
+      const r = Math.round(sumR / topCount);
+      const g = Math.round(sumG / topCount);
+      const b = Math.round(sumB / topCount);
+
+      const finalDist = Math.abs(r - bgR) + Math.abs(g - bgG) + Math.abs(b - bgB);
+      if (finalDist < 30) {
+        const brightness = (bgR * 299 + bgG * 587 + bgB * 114) / 1000;
+        return brightness > 128 ? 'rgb(0,0,0)' : 'rgb(255,255,255)';
+      }
+
+      return `rgb(${r},${g},${b})`;
+    }
+
+    function wrapTextCanvas(ctx, text, fz, maxWidth) {
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = '';
+
+      for (const word of words) {
+        const testLine = currentLine ? currentLine + ' ' + word : word;
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    }
+
+    // ── Scan-to-Scan Image Translator ──────────────────────────────────────
+    async function processImageFile(item, srcLang, tgtLang) {
+      const id = item.id;
+      setRowSubtitle(id, 'Reading image…');
+      setRowProgressBar(id, 5);
+
+      const arrayBuffer = await item.file.arrayBuffer();
+      const imgBlob = new Blob([arrayBuffer], { type: item.file.type });
+      const imgUrl = URL.createObjectURL(imgBlob);
+
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => reject(new Error('Failed to load image file'));
+        img.src = imgUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      setRowSubtitle(id, 'OCR Engine loading…');
+      setRowProgressBar(id, 12);
+
+      const tesseractLang = getTesseractLangCode(srcLang);
+      const Tesseract = (await import('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.esm.min.js')).default;
+      
+      const worker = await Tesseract.createWorker(tesseractLang, 1, {
+        logger: m => {
+          if (m && m.status === 'recognizing') {
+            const pct = Math.round(m.progress * 100);
+            setRowSubtitle(id, `OCR scanning: ${pct}%`);
+            setRowProgressBar(id, 15 + Math.round(m.progress * 45));
+          }
+        }
+      });
+
+      setRowSubtitle(id, 'Running OCR scans…');
+      const result = await worker.recognize(canvas);
+      await worker.terminate();
+
+      const ocrLines = result.data.lines || [];
+      const lines = [];
+      for (const ocrLine of ocrLines) {
+        const text = ocrLine.text?.replace(/\s+/g, ' ').trim();
+        if (!text) continue;
+
+        const box = ocrLine.bbox;
+        const x = box.x0;
+        const y = img.height - box.y1;
+        const w = box.x1 - box.x0;
+        const h = box.y1 - box.y0;
+        const fz = Math.round(h * 0.75 * 10) / 10;
+
+        const isBold = ocrLine.words?.some(w => w.is_bold) || false;
+        const isItalic = ocrLine.words?.some(w => w.is_italic) || false;
+
+        const fontStyle = {
+          bold: isBold,
+          italic: isItalic,
+          underline: false,
+          strikethrough: false,
+          raw: ocrLine.words?.[0]?.font_name || '',
+        };
+
+        lines.push({ y, x, w, h, fz, text, fontStyle, pgW: img.width, pgH: img.height });
+      }
+
+      const medianFz = lines.length ? (lines.map(l => l.fz).sort((a,b)=>a-b)[Math.floor(lines.length/2)] || 12) : 12;
+      const paragraphs = buildParagraphs([{ lines, pgW: img.width, pgH: img.height }], medianFz);
+
+      setRowSubtitle(id, `Translating ${paragraphs.length} blocks…`);
+      setRowProgressBar(id, 65);
+
+      const translationMap = await translateWithContext(paragraphs, srcLang, tgtLang, (done, total) => {
+        setRowProgressBar(id, 65 + Math.round((done / total) * 25));
+        setRowSubtitle(id, `Translating ${done}/${total}…`);
+      });
+
+      const polishedMap = postProcessTranslations(translationMap, srcLang, tgtLang);
+
+      paragraphs.forEach(para => {
+        const translated = shouldSkip(para.text) ? null : (polishedMap[para.text] || null);
+        para.displayText = (translated?.trim()) || para.text;
+      });
+
+      item.origBytes = arrayBuffer;
+      item.outBytes = new Uint8Array(arrayBuffer);
+      item.paragraphs = paragraphs;
+      item.medianFz = medianFz;
+      item.translationMap = translationMap;
+      item.polishedMap = polishedMap;
+      item.tgtLang = tgtLang;
+
+      for (const para of paragraphs) {
+        if (!para.displayText?.trim()) continue;
+
+        const x = para.x;
+        const y = img.height - para.y - para.h;
+        const w = para.w;
+        const h = para.h;
+
+        const bgColor = sampleBackgroundColor(ctx, x, y, w, h, img.width, img.height);
+        ctx.fillStyle = bgColor;
+        
+        const pad = Math.max(para.origFz * 0.15, 2);
+        for (const ln of para.lines) {
+          const lx = ln.x - pad;
+          const ly = img.height - ln.y - ln.h - pad;
+          const lw = ln.w + pad * 2;
+          const lh = ln.h + pad * 2;
+          ctx.fillRect(lx, ly, lw, lh);
+        }
+
+        const textColor = sampleTextColor(ctx, x, y, w, h, bgColor);
+        ctx.fillStyle = textColor;
+        let fz = para.origFz;
+        ctx.font = `${para.fontStyle?.italic ? 'italic ' : ''}${para.fontStyle?.bold ? 'bold ' : ''}${fz}px sans-serif`;
+        ctx.textBaseline = 'top';
+
+        let wrappedLines = wrapTextCanvas(ctx, para.displayText, fz, w);
+        let lineHeight = fz * 1.25;
+        let textHeight = wrappedLines.length * lineHeight;
+
+        let attempts = 0;
+        while (wrappedLines.length > para.lines.length && textHeight > h + 2 && fz > 5 && attempts < 10) {
+          fz -= 0.5;
+          lineHeight = fz * 1.25;
+          ctx.font = `${para.fontStyle?.italic ? 'italic ' : ''}${para.fontStyle?.bold ? 'bold ' : ''}${fz}px sans-serif`;
+          wrappedLines = wrapTextCanvas(ctx, para.displayText, fz, w);
+          textHeight = wrappedLines.length * lineHeight;
+          attempts++;
+        }
+
+        let curY = y;
+        for (const line of wrappedLines) {
+          let lx = x;
+          if (para.isCentered) {
+            const lineW = ctx.measureText(line).width;
+            lx = x + Math.max((w - lineW) / 2, 0);
+          }
+          ctx.fillText(line, lx, curY);
+          curY += lineHeight;
+        }
+      }
+
+      const outBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      item.blobs = [
+        { blob: outBlob, name: item.file.name.replace(/\.[a-z0-9]+$/i, '') + '_translated.png', label: '⬇ Translated Image' },
+        { blob: imgBlob, name: item.file.name, label: '⬇ Original Image' }
+      ];
+
+      setRowSubtitle(id, `Done · OCR scanned · ${paragraphs.length} blocks`);
+      setRowDownloadActions(id, item.blobs);
+    }
+
+    async function reRenderImage(item) {
+      const origBlob = item.blobs[1].blob;
+      const imgUrl = URL.createObjectURL(origBlob);
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = imgUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      for (const para of item.paragraphs) {
+        const displayText = para.displayText !== undefined ? para.displayText : (item.polishedMap[para.text] || para.text);
+        if (!displayText?.trim()) continue;
+
+        const x = para.x;
+        const y = img.height - para.y - para.h;
+        const w = para.w;
+        const h = para.h;
+
+        const bgColor = sampleBackgroundColor(ctx, x, y, w, h, img.width, img.height);
+        ctx.fillStyle = bgColor;
+        
+        const pad = Math.max(para.origFz * 0.15, 2);
+        for (const ln of para.lines) {
+          const lx = ln.x - pad;
+          const ly = img.height - ln.y - ln.h - pad;
+          const lw = ln.w + pad * 2;
+          const lh = ln.h + pad * 2;
+          ctx.fillRect(lx, ly, lw, lh);
+        }
+
+        const textColor = sampleTextColor(ctx, x, y, w, h, bgColor);
+        ctx.fillStyle = textColor;
+        let fz = para.origFz;
+        ctx.font = `${para.fontStyle?.italic ? 'italic ' : ''}${para.fontStyle?.bold ? 'bold ' : ''}${fz}px sans-serif`;
+        ctx.textBaseline = 'top';
+
+        let wrappedLines = wrapTextCanvas(ctx, displayText, fz, w);
+        let lineHeight = fz * 1.25;
+        let textHeight = wrappedLines.length * lineHeight;
+
+        let attempts = 0;
+        while (wrappedLines.length > para.lines.length && textHeight > h + 2 && fz > 5 && attempts < 10) {
+          fz -= 0.5;
+          lineHeight = fz * 1.25;
+          ctx.font = `${para.fontStyle?.italic ? 'italic ' : ''}${para.fontStyle?.bold ? 'bold ' : ''}${fz}px sans-serif`;
+          wrappedLines = wrapTextCanvas(ctx, displayText, fz, w);
+          textHeight = wrappedLines.length * lineHeight;
+          attempts++;
+        }
+
+        let curY = y;
+        for (const line of wrappedLines) {
+          let lx = x;
+          if (para.isCentered) {
+            const lineW = ctx.measureText(line).width;
+            lx = x + Math.max((w - lineW) / 2, 0);
+          }
+          ctx.fillText(line, lx, curY);
+          curY += lineHeight;
+        }
+      }
+
+      const outBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      item.blobs[0].blob = outBlob;
+      setRowDownloadActions(item.id, item.blobs);
     }
 
     // ── PDF File Processor ─────────────────────────────────────────────────
@@ -2551,7 +4365,11 @@
       setRowSubtitle(id, `Parsing ${pdfDoc.numPages} pages…`);
       setRowProgressBar(id, 8);
 
-      const { allPageData, medianFz, detectedFamily, numPages } = await extractPdfPages(pdfDoc);
+      const ocrMode = document.getElementById('ocrMode')?.value || 'auto';
+      const { allPageData, medianFz, detectedFamily, numPages } = await extractPdfPages(pdfDoc, srcLang, ocrMode, (progressText, progressPct) => {
+        setRowSubtitle(id, progressText);
+        setRowProgressBar(id, progressPct);
+      });
       autoSelectFont(detectedFamily, tgtLang);
 
       // Build paragraphs BEFORE translation to preserve pronoun/gender context
@@ -2572,6 +4390,8 @@
 
       const baseName = item.file.name.replace(/\.pdf$/i, '');
       const elapsed = Math.round(performance.now() - t0);
+      item.origBytes = origBytes;
+      item.outBytes = outBytes;
       item.blobs = [
         { blob: new Blob([outBytes], { type: 'application/pdf' }), name: baseName + '_translated.pdf', label: '⬇ Translated' },
         { blob: new Blob([origBytes], { type: 'application/pdf' }), name: baseName + '_original.pdf', label: '⬇ Original' },
@@ -2777,9 +4597,220 @@
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
       dropZone.classList.remove('over');
-      const validFiles = [...e.dataTransfer.files].filter(f => /\.(pdf|docx|doc|odt|epub|txt)$/i.test(f.name));
+      const validFiles = [...e.dataTransfer.files].filter(f => /\.(pdf|docx|doc|odt|epub|txt|png|jpg|jpeg)$/i.test(f.name));
       if (validFiles.length) addFiles(validFiles);
     });
+
+    // ── TRANSLATION MEMORY & GLOSSARY MANAGER ──────────────────────────────
+    let glossaryRules = [];
+
+    // Parse and load glossary rules
+    function parseGlossary(text) {
+      glossaryRules = [];
+      const lines = text.split('\n');
+      for (const line of lines) {
+        const parts = line.split('=');
+        if (parts.length >= 2) {
+          const key = parts[0].trim();
+          const value = parts[1].trim();
+          if (key && value) {
+            const esc = key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const isLatin = /^[a-zA-Z0-9_\s]+$/.test(key);
+            const pattern = isLatin ? `\\b${esc}\\b` : esc;
+            glossaryRules.push({
+              key,
+              regex: new RegExp(pattern, 'gi'),
+              value
+            });
+          }
+        }
+      }
+    }
+
+    window.saveGlossary = function() {
+      const val = document.getElementById('glossaryInput').value;
+      localStorage.setItem('linguaGlossary', val);
+      parseGlossary(val);
+      log('Glossary rules saved and compiled.', 'ok');
+    };
+
+    function loadGlossary() {
+      const saved = localStorage.getItem('linguaGlossary');
+      if (saved) {
+        const el = document.getElementById('glossaryInput');
+        if (el) el.value = saved;
+        parseGlossary(saved);
+      }
+    }
+
+    // Direct replacement helper
+    function applyGlossaryDirect(text) {
+      if (!text || !glossaryRules.length) return text;
+      let out = text;
+      for (const rule of glossaryRules) {
+        out = out.replace(rule.regex, rule.value);
+      }
+      return out;
+    }
+
+    // UI Drawer toggling
+    window.toggleTmBox = function() {
+      const box = document.getElementById('tmBox');
+      const icon = document.getElementById('tmToggleIcon');
+      if (box.classList.contains('collapsed')) {
+        box.classList.remove('collapsed');
+        icon.textContent = '▲';
+        updateTmCount();
+      } else {
+        box.classList.add('collapsed');
+        icon.textContent = '▼';
+      }
+    };
+
+    // Cache management helpers
+    async function updateTmCount() {
+      try {
+        const db = await TranslationCache.getDbInstance();
+        const tx = db.transaction('t', 'readonly');
+        const store = tx.objectStore('t');
+        const req = store.count();
+        req.onsuccess = () => {
+          const countEl = document.getElementById('tmCacheCount');
+          if (countEl) countEl.textContent = req.result;
+        };
+      } catch (e) {
+        console.error('Failed to update TM count:', e);
+      }
+    }
+
+    window.searchTmCache = async function() {
+      const query = document.getElementById('tmSearchInput').value.trim().toLowerCase();
+      const tbody = document.getElementById('tmTableBody');
+      if (!tbody) return;
+      if (!query) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--mu)">Type to search...</td></tr>';
+        return;
+      }
+
+      try {
+        const db = await TranslationCache.getDbInstance();
+        const tx = db.transaction('t', 'readonly');
+        const store = tx.objectStore('t');
+        const req = store.openCursor();
+        let matches = 0;
+        let html = '';
+
+        req.onsuccess = (e) => {
+          const cursor = e.target.result;
+          if (cursor && matches < 50) {
+            const keyParts = cursor.value.k.split('|');
+            const src = keyParts[2] || '';
+            const val = cursor.value.v || '';
+            if (src.toLowerCase().includes(query) || val.toLowerCase().includes(query)) {
+              html += `<tr>
+                <td title="${src.replace(/"/g, '&quot;')}">${src}</td>
+                <td title="${val.replace(/"/g, '&quot;')}">${val}</td>
+              </tr>`;
+              matches++;
+            }
+            cursor.continue();
+          } else {
+            tbody.innerHTML = html || '<tr><td colspan="2" style="text-align:center;color:var(--mu)">No matches found.</td></tr>';
+          }
+        };
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:var(--rd)">Error: ${err.message}</td></tr>`;
+      }
+    };
+
+    window.clearSearchTm = function() {
+      document.getElementById('tmSearchInput').value = '';
+      searchTmCache();
+    };
+
+    window.exportTm = async function() {
+      log('Exporting Translation Memory...', 'i');
+      try {
+        const db = await TranslationCache.getDbInstance();
+        const tx = db.transaction('t', 'readonly');
+        const store = tx.objectStore('t');
+        const req = store.getAll();
+        req.onsuccess = () => {
+          const list = req.result.map(item => ({
+            key: item.k,
+            val: item.v
+          }));
+          const json = JSON.stringify(list, null, 2);
+          const blob = new Blob([json], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `lingua_translation_memory.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          log(`Successfully exported ${list.length} translation pairs.`, 'ok');
+        };
+      } catch (e) {
+        log('Failed to export TM: ' + e.message, 'e');
+      }
+    };
+
+    window.importTm = function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const list = JSON.parse(e.target.result);
+          if (!Array.isArray(list)) throw new Error('Invalid format (must be a JSON array)');
+          
+          const db = await TranslationCache.getDbInstance();
+          const tx = db.transaction('t', 'readwrite');
+          const store = tx.objectStore('t');
+          
+          let count = 0;
+          for (const item of list) {
+            if (item.key && item.val) {
+              store.put({ k: item.key, v: item.val });
+              count++;
+            }
+          }
+          
+          tx.oncomplete = () => {
+            log(`Successfully imported ${count} translation pairs.`, 'ok');
+            updateTmCount();
+            document.getElementById('tmImportFile').value = '';
+          };
+        } catch (err) {
+          log('Failed to import TM: ' + err.message, 'e');
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    window.clearTmCache = async function() {
+      if (!confirm('Are you sure you want to completely WIPE the translation memory cache? This cannot be undone.')) return;
+      log('Wiping translation cache...', 'w');
+      try {
+        const db = await TranslationCache.getDbInstance();
+        const tx = db.transaction('t', 'readwrite');
+        const store = tx.objectStore('t');
+        const req = store.clear();
+        req.onsuccess = () => {
+          log('Translation memory cache cleared.', 'ok');
+          updateTmCount();
+          clearSearchTm();
+        };
+      } catch (e) {
+        log('Failed to wipe cache: ' + e.message, 'e');
+      }
+    };
+
+    // Load Glossary on startup
+    loadGlossary();
   </script>
 </body>
 
