@@ -5107,6 +5107,12 @@
       const elapsed = Math.round(performance.now() - t0);
       item.origBytes = origBytes;
       item.outBytes = outBytes;
+      item.paragraphs = paragraphs;
+      item.medianFz = medianFz;
+      item.translationMap = translationMap;
+      item.polishedMap = polishedMap;
+      item.srcLang = srcLang;
+      item.tgtLang = tgtLang;
       item.blobs = [
         { blob: new Blob([outBytes], { type: 'application/pdf' }), name: baseName + '_translated.pdf', label: '⬇ Translated' },
         { blob: new Blob([origBytes], { type: 'application/pdf' }), name: baseName + '_original.pdf', label: '⬇ Original' },
