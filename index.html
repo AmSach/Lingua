@@ -1547,7 +1547,7 @@
 
   <header>
     <div class="logo">Lingua</div>
-    <span class="badge">v23 · NEURAL ENGINE</span>
+    <span class="badge">v23 · Serverless · Zero Telemetry</span>
     <div class="header-right">
       <div class="status-dot" id="sdot"></div>
       <span id="stxt">Initializing</span>
@@ -1602,7 +1602,7 @@
           <span>Source</span>
           <span id="cc" style="font-family:var(--mono);font-size:.63rem;color:var(--mu)">0/5000</span>
         </div>
-        <textarea id="srcText" placeholder="Enter text to translate…" maxlength="5000"
+        <textarea id="srcText" placeholder="Type or paste text to translate…" maxlength="5000"
           oninput="document.getElementById('cc').textContent=this.value.length+'/5000'"></textarea>
       </div>
       <div class="text-box">
@@ -1641,7 +1641,7 @@
     </div>
 
     <!-- ══ FILE TRANSLATION ══ -->
-    <div class="section-label">Files — PDF · DOCX · DOC · EPUB · TXT · ODT</div>
+    <div class="section-label">Document Transmuter — PDF · DOCX · EPUB · Images</div>
 
     <!-- Font Picker & OCR Settings (shown when a PDF is queued) -->
     <div class="font-bar" id="fontBar">
@@ -1670,9 +1670,8 @@
       <input type="file" id="mainInput" accept=".pdf,.docx,.doc,.epub,.txt,.odt,.png,.jpg,.jpeg" multiple
         onchange="addFiles(this.files)">
       <div class="dz-icon">📂</div>
-      <div class="dz-title">Drop files here or tap to browse</div>
-      <div class="dz-subtitle">Any mix · single or multiple · headings/bold/italic preserved · clean readable reflow
-      </div>
+      <div class="dz-title">Drop files here or click to browse</div>
+      <div class="dz-subtitle">Any mix · Single or multiple · Formatting preserved · Clean readable reflow</div>
     </div>
 
     <div class="queue-actions" id="queueActs" style="display:none">
@@ -1688,7 +1687,7 @@
     <div class="tm-box collapsed" id="tmBox">
       <div class="tm-header" onclick="toggleTmBox()">
         <div class="tm-title">
-          <span>💾 Translation Memory & Glossary Manager</span>
+          <span>💾 Local Translation Cache & Glossary Rules</span>
         </div>
         <span class="tm-toggle-icon" id="tmToggleIcon">▼</span>
       </div>
@@ -1744,8 +1743,7 @@
       <div id="log">
         <div class="log-line">
           <span class="log-ts">--:--:--.---</span>
-          <span class="log-msg d">Lingua v23 · unified interface · clean PDF reflow · headings/bold/italic preserved ·
-            10 providers.</span>
+          <span class="log-msg d">Lingua v23 initialized. Zero telemetry. 10 redundant providers ready.</span>
         </div>
       </div>
     </div>
@@ -2714,23 +2712,62 @@
       }
     }
 
+    async function fetchWithProgress(url, label) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const contentLength = response.headers.get('content-length');
+      if (!contentLength) {
+        return response.arrayBuffer();
+      }
+      
+      const total = parseInt(contentLength, 10);
+      let loaded = 0;
+      
+      const reader = response.body.getReader();
+      const chunks = [];
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        loaded += value.length;
+        const pct = Math.round((loaded / total) * 100);
+        setStatus(`Downloading ${label}: ${pct}%`, true);
+      }
+      
+      const allChunks = new Uint8Array(loaded);
+      let offset = 0;
+      for (const chunk of chunks) {
+        allChunks.set(chunk, offset);
+        offset += chunk.length;
+      }
+      return allChunks.buffer;
+    }
+
     async function embedPdfFonts(pdfDoc, StandardFonts, targetLang) {
       const baseFontName = document.getElementById('fontPick').value || 'TimesRoman';
 
-      // Special-script languages need a Noto font; fall back to Helvetica on embed failure
-      if (SCRIPT_FONTS[targetLang]) {
-        const fontKey = SCRIPT_FONTS[targetLang];
+      const isStdWestern = ['en', 'fr', 'de', 'es', 'it', 'pt'].includes(targetLang);
+      const needCustomFont = !isStdWestern || SCRIPT_FONTS[targetLang] || baseFontName.startsWith('noto');
+
+      // Special-script languages or extended Latin languages need a Noto font; fall back to Helvetica on embed failure
+      if (needCustomFont) {
+        const fontKey = SCRIPT_FONTS[targetLang] || 'noto-sans';
         const url = FONT_URLS[fontKey] || FONT_URLS['noto-sans'];
         let bytes = fontCache[fontKey];
         if (!bytes) {
           try {
-            bytes = await (await fetch(url)).arrayBuffer();
+            const fontLabel = fontKey.replace('noto-sans-', 'Noto ').replace('noto-sans', 'Noto Sans').replace('noto-serif', 'Noto Serif');
+            const arrayBuf = await fetchWithProgress(url, `${fontLabel} font`);
+            bytes = arrayBuf;
             fontCache[fontKey] = bytes;
           } catch (e) {
             log(`jsDelivr fetch failed for ${fontKey}: ${e.message}. Trying backup CDN unpkg...`, 'w');
             try {
               const backupUrl = url.replace('https://cdn.jsdelivr.net/npm/', 'https://unpkg.com/');
-              bytes = await (await fetch(backupUrl)).arrayBuffer();
+              const fontLabel = fontKey.replace('noto-sans-', 'Noto ').replace('noto-sans', 'Noto Sans').replace('noto-serif', 'Noto Serif');
+              const arrayBuf = await fetchWithProgress(backupUrl, `${fontLabel} font (backup)`);
+              bytes = arrayBuf;
               fontCache[fontKey] = bytes;
             } catch (err2) {
               log(`Backup CDN also failed for ${fontKey}: ${err2.message}`, 'e');
@@ -2774,25 +2811,74 @@
     }
 
     /** Measures text width; falls back to a rough character-based estimate on failure. */
+    function measureTextWidthCanvas(str, fontSize, fontName, bold, italic) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      let fontStyle = '';
+      if (bold) fontStyle += 'bold ';
+      if (italic) fontStyle += 'italic ';
+      ctx.font = `${fontStyle}${fontSize}px "${fontName}", sans-serif`;
+      return ctx.measureText(str).width;
+    }
+
     function measureTextWidth(str, fontSize, font) {
       try { return font.widthOfTextAtSize(str, fontSize); } catch { return str.length * fontSize * 0.52; }
     }
 
     /** Wraps text to fit within colWidth, returning an array of line strings. */
-    function wrapText(text, fontSize, colWidth, font) {
-      const words = text.split(/\s+/);
-      const lines = [];
-      let currentLine = '';
-      for (const word of words) {
-        const candidate = currentLine ? `${currentLine} ${word}` : word;
-        if (measureTextWidth(candidate, fontSize, font) <= colWidth) {
-          currentLine = candidate;
+    function wrapText(text, fontSize, colWidth, font, canvasFontName = null, style = null) {
+      if (!text) return [];
+      
+      // Tokenize: split into words (for space-separated languages) and individual CJK characters
+      const tokens = [];
+      const rawTokens = text.split(/(\s+)/);
+      for (const t of rawTokens) {
+        if (!t) continue;
+        // Check if token contains CJK/Hangul characters
+        if (/[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF\uFF00-\uFFEF\u4E00-\u9FAF\u3400-\u4DBF\uAC00-\uD7AF]/.test(t)) {
+          for (const char of Array.from(t)) {
+            tokens.push(char);
+          }
         } else {
-          if (currentLine) lines.push(currentLine);
-          currentLine = word;
+          tokens.push(t);
         }
       }
-      if (currentLine) lines.push(currentLine);
+
+      const lines = [];
+      let currentLine = '';
+      
+      for (const token of tokens) {
+        if (/^\s+$/.test(token)) {
+          if (!currentLine) continue;
+        }
+        
+        // Compute if we need a space separator (only between consecutive non-space words/chars when appropriate)
+        const lastChar = currentLine ? currentLine[currentLine.length - 1] : '';
+        const separator = (currentLine && !/[\s\u3000]/.test(lastChar) && !/[\s\u3000]/.test(token) && 
+                           !/[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/.test(token) && 
+                           !/[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/.test(lastChar)) ? ' ' : '';
+        
+        const candidate = currentLine ? `${currentLine}${separator}${token}` : token;
+        
+        let width = 0;
+        if (canvasFontName) {
+          width = measureTextWidthCanvas(candidate, fontSize, canvasFontName, style?.bold, style?.italic);
+        } else {
+          width = measureTextWidth(candidate, fontSize, font);
+        }
+
+        if (width <= colWidth) {
+          currentLine = candidate;
+        } else {
+          if (currentLine) {
+            lines.push(currentLine.trimEnd());
+          }
+          currentLine = token;
+        }
+      }
+      if (currentLine) {
+        lines.push(currentLine.trimEnd());
+      }
       return lines;
     }
 
@@ -2932,12 +3018,14 @@
               const text = `Downloading OCR model (${modelName}): ${pct}%`;
               const overallPct = 5 + Math.round(m.progress * 5); // 5% to 10%
               if (onProgressUpdate) onProgressUpdate(text, overallPct);
+              setStatus(text, true);
             } else if (m.status.includes('recognizing')) {
               workerProgress[workerIdx] = m.progress;
               const avgProgress = workerProgress.reduce((a, b) => a + b, 0) / maxWorkers;
               const text = `OCR page ${completedJobs + 1}/${ocrPages.length}: ${Math.round(avgProgress * 100)}%`;
               const overallPct = 10 + Math.round((completedJobs + avgProgress) / ocrPages.length * 70); // 10% to 80%
               if (onProgressUpdate) onProgressUpdate(text, overallPct);
+              setStatus(text, true);
             }
           }
         };
@@ -2946,6 +3034,7 @@
         
         try {
           if (onProgressUpdate) onProgressUpdate('Spawning OCR thread pool…', 5);
+          setStatus('Spawning OCR thread pool…', true);
           await pool.init();
 
           // Prepare the canvases
@@ -3174,6 +3263,10 @@
           current.h = Math.max(...yMaxs) - current.y;
 
           // Automatic signature/handwriting detection:
+          const pageData = allPageData[current.pageIndex];
+          const hasRightCol = pageData ? pageData.lines.some(l => l.x > pageData.pgW * 0.45 && !l.isCentered) : false;
+          const colWidth = pageData ? (hasRightCol ? (pageData.pgW * 0.5) : pageData.pgW) : 595; // fallback standard width if undefined
+
           const isBottomRight = (current.x > colWidth * 0.48) && (current.y < 210);
           const textClean = current.text.trim().toLowerCase();
           const isSigPattern = textClean === '124.' || textClean === '124' || textClean === 'phil' || textClean === 'plul';
@@ -3213,9 +3306,15 @@
             yGapRatio = 1.0;
           }
 
-          // A line is considered short if it ends early, meaning it marks the end of a block/paragraph.
-          // This prevents header/address segments (which are short lines) from being merged into standard prose.
-          const prevLineIsShort = prevLine && (prevLine.w < colWidth * 0.5) && !/[-\u2011]$/.test(prevLine.text.trimEnd());
+          // A line is considered short if it ends early (width < 50%), or if it is part of an address/list
+          // stack (previous line ends in comma/colon/semicolon and current line starts with a capitalized letter).
+          const prevEndsWithListPunct = prevLine && /[,;:]\s*$/.test(prevLine.text);
+          const currentStartsCapital = /^[A-Z0-9\u0905-\u0939]/.test(ln.text.trim());
+          const isAddressOrListLine = prevEndsWithListPunct && currentStartsCapital;
+          const prevLineIsShort = prevLine && (
+            (prevLine.w < colWidth * 0.5) || 
+            isAddressOrListLine
+          ) && !/[-\u2011]$/.test(prevLine.text.trimEnd());
 
           const bigGap = yGapRatio > 1.55;
           const lastEndsSentence = SENTENCE_END_RE.test(lastLineText.trimEnd());
@@ -3269,6 +3368,153 @@
      * paragraph text with proper reflow, font embedding, and page numbering.
      */
     
+    
+    const ARABIC_TABLE = {
+      0x0621: [0xFE80, 0xFE80, 0xFE80, 0xFE80], // Hamza
+      0x0622: [0xFE81, 0xFE82, 0xFE81, 0xFE82], // Alif Madda
+      0x0623: [0xFE83, 0xFE84, 0xFE83, 0xFE84], // Alif Hamza Above
+      0x0624: [0xFE85, 0xFE86, 0xFE85, 0xFE86], // Waw Hamza Above
+      0x0625: [0xFE87, 0xFE88, 0xFE87, 0xFE88], // Alif Hamza Below
+      0x0626: [0xFE89, 0xFE8A, 0xFE8B, 0xFE8C], // Ya Hamza Above
+      0x0627: [0xFE8D, 0xFE8E, 0xFE8D, 0xFE8E], // Alif
+      0x0628: [0xFE8F, 0xFE90, 0xFE91, 0xFE92], // Baa
+      0x0629: [0xFE93, 0xFE94, 0xFE93, 0xFE94], // Taa Marbuta
+      0x062A: [0xFE95, 0xFE96, 0xFE97, 0xFE98], // Taa
+      0x062B: [0xFE99, 0xFE9A, 0xFE9B, 0xFE9C], // Thaa
+      0x062C: [0xFE9D, 0xFE9E, 0xFE9F, 0xFEA0], // Jeem
+      0x062D: [0xFEA1, 0xFEA2, 0xFEA3, 0xFEA4], // Haa
+      0x062E: [0xFEA5, 0xFEA6, 0xFEA7, 0xFEA8], // Khaa
+      0x062F: [0xFEA9, 0xFEAA, 0xFEA9, 0xFEAA], // Dal
+      0x0630: [0xFEAB, 0xFEAC, 0xFEAB, 0xFEAC], // Dhal
+      0x0631: [0xFEAD, 0xFEAE, 0xFEAD, 0xFEAE], // Ra
+      0x0632: [0xFEAF, 0xFEB0, 0xFEAF, 0xFEB0], // Zain
+      0x0633: [0xFEB1, 0xFEB2, 0xFEB3, 0xFEB4], // Seen
+      0x0634: [0xFEB5, 0xFEB6, 0xFEB7, 0xFEB8], // Sheen
+      0x0635: [0xFEB9, 0xFEBA, 0xFEBB, 0xFEBC], // Saad
+      0x0636: [0xFEBD, 0xFEBE, 0xFEBF, 0xFEC0], // Daad
+      0x0637: [0xFEC1, 0xFEC2, 0xFEC3, 0xFEC4], // Taa (Tah)
+      0x0638: [0xFEC5, 0xFEC6, 0xFEC7, 0xFEC8], // Zaa (Zah)
+      0x0639: [0xFEC9, 0xFECA, 0xFECB, 0xFECC], // Ain
+      0x063A: [0xFECD, 0xFECE, 0xFECF, 0xFED0], // Ghain
+      0x0641: [0xFED1, 0xFED2, 0xFED3, 0xFED4], // Faa
+      0x0642: [0xFED5, 0xFED6, 0xFED7, 0xFED8], // Qaaf
+      0x0643: [0xFED9, 0xFEDA, 0xFEDB, 0xFEDC], // Kaaf
+      0x0644: [0xFEDD, 0xFEDE, 0xFEDF, 0xFEE0], // Laam
+      0x0645: [0xFEE1, 0xFEE2, 0xFEE3, 0xFEE4], // Meem
+      0x0646: [0xFEE5, 0xFEE6, 0xFEE7, 0xFEE8], // Noon
+      0x0647: [0xFEE9, 0xFEEA, 0xFEEB, 0xFEEC], // Heh
+      0x0648: [0xFEED, 0xFEEE, 0xFEED, 0xFEEE], // Waw
+      0x0649: [0xFEEF, 0xFEF0, 0xFEEF, 0xFEF0], // Alif Maksura
+      0x064A: [0xFEF1, 0xFEF2, 0xFEF3, 0xFEF4], // Yeh
+      // Extended Arabic (Persian/Urdu)
+      0x067E: [0xFB56, 0xFB57, 0xFB58, 0xFB59], // Peh
+      0x0686: [0xFB7A, 0xFB7B, 0xFB7C, 0xFB7D], // Tcheh
+      0x0698: [0xFB8A, 0xFB8B, 0xFB8A, 0xFB8B], // Jeh
+      0x06A9: [0xFB8E, 0xFB8F, 0xFB90, 0xFB91], // Keheh
+      0x06AF: [0xFB92, 0xFB93, 0xFB94, 0xFB95], // Gaf
+      0x06CC: [0xFDFC, 0xFDFD, 0xFDFE, 0xFDFF], // Farsi Yeh
+    };
+
+    const RIGHT_ONLY = new Set([
+      0x0622, 0x0623, 0x0624, 0x0625, 0x0627, 0x062F, 0x0630, 0x0631, 0x0632, 0x0648, 0x0698
+    ]);
+
+    function shapeArabicText(text) {
+      if (!text) return '';
+      const chars = Array.from(text);
+      const shaped = [];
+
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        const code = char.charCodeAt(0);
+
+        if (ARABIC_TABLE[code]) {
+          let linkRight = false;
+          if (i > 0) {
+            const prevCode = chars[i - 1].charCodeAt(0);
+            if (ARABIC_TABLE[prevCode] && prevCode !== 0x0621 && !RIGHT_ONLY.has(prevCode)) {
+              linkRight = true;
+            }
+          }
+
+          let linkLeft = false;
+          if (i < chars.length - 1) {
+            const nextCode = chars[i + 1].charCodeAt(0);
+            if (ARABIC_TABLE[nextCode] && nextCode !== 0x0621) {
+              linkLeft = true;
+            }
+          }
+
+          let formIdx = 0;
+          if (linkRight && linkLeft && !RIGHT_ONLY.has(code)) {
+            formIdx = 3; // Medial
+          } else if (linkRight) {
+            formIdx = 1; // Final
+          } else if (linkLeft && !RIGHT_ONLY.has(code)) {
+            formIdx = 2; // Initial
+          } else {
+            formIdx = 0; // Isolated
+          }
+
+          shaped.push(String.fromCharCode(ARABIC_TABLE[code][formIdx]));
+        } else {
+          shaped.push(char);
+        }
+      }
+      return shaped.join('');
+    }
+
+    function processRtlText(text, isRTL) {
+      if (!isRTL) return text;
+      
+      let shaped = shapeArabicText(text);
+      
+      const tokens = [];
+      let currentToken = '';
+      let isCurrentRtl = false;
+
+      const isRtlChar = (char) => {
+        const code = char.charCodeAt(0);
+        return (code >= 0x0590 && code <= 0x06FF) || (code >= 0xFB50 && code <= 0xFDFF) || (code >= 0xFE70 && code <= 0xFEFF);
+      };
+
+      const isNeutralChar = (char) => {
+        return /[\s0-9.,!?;:\(\)\-+/*=]/.test(char);
+      };
+
+      for (const char of Array.from(shaped)) {
+        if (isNeutralChar(char)) {
+          currentToken += char;
+        } else {
+          const isRtl = isRtlChar(char);
+          if (currentToken) {
+            if (isRtl === isCurrentRtl) {
+              currentToken += char;
+            } else {
+              tokens.push({ text: currentToken, isRtl: isCurrentRtl });
+              currentToken = char;
+              isCurrentRtl = isRtl;
+            }
+          } else {
+            currentToken = char;
+            isCurrentRtl = isRtl;
+          }
+        }
+      }
+      if (currentToken) {
+        tokens.push({ text: currentToken, isRtl: isCurrentRtl });
+      }
+
+      const processedTokens = tokens.map(tok => {
+        if (tok.isRtl) {
+          return Array.from(tok.text).reverse().join('');
+        } else {
+          return tok.text;
+        }
+      });
+
+      return processedTokens.reverse().join('');
+    }
     const LEFT_VOWELS = new Set([
       '\u093f', // Devanagari short i
       '\u09bf', // Bengali short i
@@ -3420,9 +3666,15 @@
         let fz = para.origFz;
         let lineHeight = fz * 1.25;
 
+        const isStdWestern = ['en', 'fr', 'de', 'es', 'it', 'pt'].includes(targetLang);
+        const baseFontName = document.getElementById('fontPick').value || 'TimesRoman';
+        const needCustomFont = !isStdWestern || SCRIPT_FONTS[targetLang] || baseFontName.startsWith('noto');
+
+        const fontKey = SCRIPT_FONTS[targetLang] || 'noto-sans';
+        const canvasFontName = `Font_${fontKey}`;
+
         // Wrap text and check height. If it overflows the bounding box height, scale font size down.
-        const drawingText = reorderIndicText(para.displayText);
-        let wrappedLines = wrapText(drawingText, fz, bw, activeFont);
+        let wrappedLines = wrapText(para.displayText, fz, bw, activeFont, needCustomFont ? canvasFontName : null, style);
         let textHeight = wrappedLines.length * lineHeight;
 
         // Loop to shrink text size if it wraps to more lines than original and overflows height
@@ -3430,54 +3682,168 @@
         while (wrappedLines.length > para.lines.length && textHeight > bh + 2 && fz > 5 && attempts < 10) {
           fz -= 0.5;
           lineHeight = fz * 1.25;
-          wrappedLines = wrapText(drawingText, fz, bw, activeFont);
+          wrappedLines = wrapText(para.displayText, fz, bw, activeFont, needCustomFont ? canvasFontName : null, style);
           textHeight = wrappedLines.length * lineHeight;
           attempts++;
         }
 
-        // Draw the wrapped text lines inside the bounding box
-        // We start drawing from the top of the bounding box (by + bh - fz) downwards.
-        let curY = by + bh - fz;
-        for (const wline of wrappedLines) {
-          let x = bx;
-          if (para.isCentered) {
-            const textW = measureTextWidth(wline, fz, activeFont);
-            x = bx + Math.max((bw - textW) / 2, 0);
-          } else if (isRTL) {
-            const textW = measureTextWidth(wline, fz, activeFont);
-            x = bx + bw - textW;
+        if (needCustomFont) {
+          // Register custom font with the browser if it hasn't been registered yet
+          const bytes = fontCache[fontKey];
+          let isRegistered = false;
+          document.fonts.forEach(f => {
+            if (f.family === canvasFontName) isRegistered = true;
+          });
+          if (!isRegistered && bytes) {
+            try {
+              const fontFace = new FontFace(canvasFontName, bytes);
+              await fontFace.load();
+              document.fonts.add(fontFace);
+              log(`Registered custom canvas font: ${canvasFontName}`, 'ok');
+            } catch (err) {
+              log(`Error registering canvas font ${canvasFontName}: ${err.message}`, 'w');
+            }
           }
 
-          try {
-            page.drawText(wline, {
-              x,
-              y: curY,
-              size: fz,
-              font: activeFont,
-              color: rgb(0, 0, 0),
-            });
-
-            // Draw underline / strikethrough if needed
-            if (style.strikethrough) {
-              const w = measureTextWidth(wline, fz, activeFont);
-              page.drawLine({
-                start: { x, y: curY + fz * 0.32 },
-                end: { x: x + w, y: curY + fz * 0.32 },
-                thickness: Math.max(fz * 0.07, 0.5),
-                color: rgb(0, 0, 0)
-              });
+          // Render onto a high-DPI transparent canvas to get perfectly shaped native browser text
+          const scaleFactor = 4; // High DPI (300 DPI equivalent)
+          const canvas = document.createElement('canvas');
+          canvas.width = bw * scaleFactor;
+          canvas.height = bh * scaleFactor;
+          const ctx = canvas.getContext('2d');
+          ctx.scale(scaleFactor, scaleFactor);
+          
+          ctx.clearRect(0, 0, bw, bh);
+          
+          let canvasStyle = '';
+          if (style.bold) canvasStyle += 'bold ';
+          if (style.italic) canvasStyle += 'italic ';
+          ctx.font = `${canvasStyle}${fz}px "${canvasFontName}", sans-serif`;
+          ctx.fillStyle = '#000000';
+          ctx.textBaseline = 'alphabetic';
+          
+          let curY = fz + Math.max(fz * 0.05, 1);
+          for (const wline of wrappedLines) {
+            let x = 0;
+            const textW = ctx.measureText(wline).width;
+            if (para.isCentered) {
+              x = Math.max((bw - textW) / 2, 0);
+            } else if (isRTL) {
+              x = bw - textW;
             }
+            
+            ctx.fillText(wline, x, curY);
+            
             if (style.underline) {
-              const w = measureTextWidth(wline, fz, activeFont);
-              page.drawLine({
-                start: { x, y: curY - fz * 0.12 },
-                end: { x: x + w, y: curY - fz * 0.12 },
-                thickness: Math.max(fz * 0.06, 0.4),
-                color: rgb(0, 0, 0)
-              });
+              ctx.beginPath();
+              ctx.moveTo(x, curY + fz * 0.1);
+              ctx.lineTo(x + textW, curY + fz * 0.1);
+              ctx.lineWidth = Math.max(fz * 0.07, 1);
+              ctx.strokeStyle = '#000000';
+              ctx.stroke();
             }
-          } catch { /* ignore rendering errors */ }
-          curY -= lineHeight;
+            if (style.strikethrough) {
+              ctx.beginPath();
+              ctx.moveTo(x, curY - fz * 0.3);
+              ctx.lineTo(x + textW, curY - fz * 0.3);
+              ctx.lineWidth = Math.max(fz * 0.07, 1);
+              ctx.strokeStyle = '#000000';
+              ctx.stroke();
+            }
+            
+            curY += lineHeight;
+          }
+          
+          try {
+            const dataUrl = canvas.toDataURL('image/png');
+            const base64Data = dataUrl.split(',')[1];
+            const binaryString = atob(base64Data);
+            const len = binaryString.length;
+            const bytesArr = new Uint8Array(len);
+            for (let k = 0; k < len; k++) {
+              bytesArr[k] = binaryString.charCodeAt(k);
+            }
+            
+            const pngImage = await outDoc.embedPng(bytesArr);
+            page.drawImage(pngImage, {
+              x: bx,
+              y: by,
+              width: bw,
+              height: bh,
+            });
+          } catch (embedErr) {
+            log(`Canvas embed failed: ${embedErr.message}, falling back to drawText`, 'w');
+            // Fallback to normal drawText
+            let curY = by + bh - fz;
+            for (const wline of wrappedLines) {
+              let processedLine = wline;
+              if (isRTL) {
+                processedLine = processRtlText(processedLine, true);
+              }
+              let x = bx;
+              if (para.isCentered) {
+                const textW = measureTextWidth(processedLine, fz, activeFont);
+                x = bx + Math.max((bw - textW) / 2, 0);
+              } else if (isRTL) {
+                const textW = measureTextWidth(processedLine, fz, activeFont);
+                x = bx + bw - textW;
+              }
+              try {
+                page.drawText(processedLine, {
+                  x,
+                  y: curY,
+                  size: fz,
+                  font: activeFont,
+                  color: rgb(0, 0, 0),
+                });
+              } catch (e) {
+                log(`Fallback drawText failed: ${e.message}`, 'e');
+              }
+              curY -= lineHeight;
+            }
+          }
+        } else {
+          // Standard pdf-lib native text drawing loop (Fast/Selectable Western text)
+          let curY = by + bh - fz;
+          for (const wline of wrappedLines) {
+            let processedLine = wline;
+            let x = bx;
+            if (para.isCentered) {
+              const textW = measureTextWidth(processedLine, fz, activeFont);
+              x = bx + Math.max((bw - textW) / 2, 0);
+            }
+            try {
+              page.drawText(processedLine, {
+                x,
+                y: curY,
+                size: fz,
+                font: activeFont,
+                color: rgb(0, 0, 0),
+              });
+
+              if (style.underline) {
+                const w = measureTextWidth(processedLine, fz, activeFont);
+                page.drawLine({
+                  start: { x, y: curY - fz * 0.1 },
+                  end: { x: x + w, y: curY - fz * 0.1 },
+                  thickness: Math.max(fz * 0.07, 0.5),
+                  color: rgb(0, 0, 0),
+                });
+              }
+              if (style.strikethrough) {
+                const w = measureTextWidth(processedLine, fz, activeFont);
+                page.drawLine({
+                  start: { x, y: curY + fz * 0.32 },
+                  end: { x: x + w, y: curY + fz * 0.32 },
+                  thickness: Math.max(fz * 0.07, 0.5),
+                  color: rgb(0, 0, 0),
+                });
+              }
+            } catch (e) {
+              log(`drawText error: ${e.message}`, 'w');
+            }
+            curY -= lineHeight;
+          }
         }
       }
 
@@ -4486,10 +4852,22 @@
       
       const worker = await Tesseract.createWorker(tesseractLang, 1, {
         logger: m => {
-          if (m && m.status === 'recognizing') {
-            const pct = Math.round(m.progress * 100);
-            setRowSubtitle(id, `OCR scanning: ${pct}%`);
-            setRowProgressBar(id, 15 + Math.round(m.progress * 45));
+          if (m && m.status) {
+            if (m.status.includes('downloading')) {
+              const match = m.status.match(/downloading\s+(\S+)/);
+              const modelName = match ? match[1].replace('.traineddata.gz', '') : tesseractLang;
+              const pct = Math.round(m.progress * 100);
+              const text = `Downloading OCR model (${modelName}): ${pct}%`;
+              setRowSubtitle(id, text);
+              setRowProgressBar(id, 5 + Math.round(m.progress * 7));
+              setStatus(text, true);
+            } else if (m.status === 'recognizing') {
+              const pct = Math.round(m.progress * 100);
+              const text = `OCR scanning: ${pct}%`;
+              setRowSubtitle(id, text);
+              setRowProgressBar(id, 15 + Math.round(m.progress * 45));
+              setStatus(text, true);
+            }
           }
         }
       });
