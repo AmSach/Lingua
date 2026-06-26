@@ -3267,10 +3267,35 @@
           const hasRightCol = pageData ? pageData.lines.some(l => l.x > pageData.pgW * 0.45 && !l.isCentered) : false;
           const colWidth = pageData ? (hasRightCol ? (pageData.pgW * 0.5) : pageData.pgW) : 595; // fallback standard width if undefined
 
-          const isBottomRight = (current.x > colWidth * 0.48) && (current.y < 210);
+          const isBottomRight = (current.x > colWidth * 0.45) && (current.y < 210);
           const textClean = current.text.trim().toLowerCase();
-          const isSigPattern = textClean === '124.' || textClean === '124' || textClean === 'phil' || textClean === 'plul';
-          if (isBottomRight && isSigPattern) {
+          
+          const hasSigKeywords = textClean.includes('signature') || 
+                                 textClean.includes('signed') || 
+                                 textClean.includes('sd/') || 
+                                 textClean.includes('sd/-') || 
+                                 textClean.includes('/s/') ||
+                                 textClean.includes('s/d') ||
+                                 textClean.includes('witness') ||
+                                 textClean.includes('seal') ||
+                                 textClean.includes('execut') ||
+                                 textClean.includes('director') ||
+                                 textClean.includes('manager') ||
+                                 textClean.includes('partner') ||
+                                 textClean.includes('proprietor') ||
+                                 textClean.includes('authorized') ||
+                                 textClean.includes('हस्ताक्षर') ||
+                                 textClean.includes('हस्ता0') ||
+                                 textClean.includes('हस्त0') ||
+                                 textClean.includes('साक्षी') ||
+                                 textClean.includes('दिनांक') ||
+                                 textClean.includes('मोहर');
+          
+          const isShortOrNoise = textClean.split(/\s+/).length <= 4 || 
+                                 textClean.length <= 15 || 
+                                 (/^[a-z0-9\W]+$/i.test(textClean) && textClean.length < 8);
+
+          if (isBottomRight && (hasSigKeywords || isShortOrNoise)) {
             current.isSignature = true;
             current.displayText = ''; // don't draw translated text over it
           }
@@ -4611,99 +4636,7 @@
       return out;
     }
 
-    /**
-     * Context-aware translation for PDF paragraphs.
-     * Translates in document order, prepending the previous paragraph as context
-     * to help the engine maintain subject/pronoun/tense continuity.
-     * Uses a rare three-em-dash separator that survives MT to split the response.
-     */
-    async function translateWithContext(paragraphs, srcLang, tgtLang, onProgress) {
-      const CTX_SEP = ' \u2E3B '; // three-em dash — rare enough to survive MT
-      const CTX_MAX = 120;        // max chars of context prefix
 
-      // Warm the cache with all unique texts
-      const allTexts = paragraphs.map(p => p.text).filter(t => t && !SKIP_RE.test(t));
-      const uniqueTexts = [...new Set(allTexts)];
-      const cached = await TranslationCache.getMany(uniqueTexts, srcLang, tgtLang);
-      const xlMap = { ...cached };
-      const needsTranslation = new Set(uniqueTexts.filter(t => !cached[t]));
-
-      log(`Context-translate: ${uniqueTexts.length} unique, ${needsTranslation.size} uncached`, 'h');
-
-      if (!needsTranslation.size) {
-        if (onProgress) onProgress(uniqueTexts.length, uniqueTexts.length);
-        return xlMap;
-      }
-
-      statsStart();
-
-      // Build context-augmented texts in document order
-      const batch = [];
-      let prevContextText = '';
-
-      for (const p of paragraphs) {
-        if (!p.text || SKIP_RE.test(p.text)) continue;
-        if (xlMap[p.text]) {
-          if (!p.isHeading) prevContextText = p.text;
-          continue;
-        }
-
-        const ctxPrefix = (!p.isHeading && prevContextText)
-          ? (prevContextText.length > CTX_MAX ? prevContextText.slice(-CTX_MAX) : prevContextText) + CTX_SEP
-          : '';
-
-        batch.push({ text: p.text, ctx: ctxPrefix, augmented: ctxPrefix + p.text });
-        if (!p.isHeading) prevContextText = p.text;
-      }
-
-      // Translate augmented texts through GT
-      const augmented = batch.map(b => b.augmented);
-      const uniqueAugmented = [...new Set(augmented)];
-      const [gt1, gt2] = await Promise.all([
-        gtTranslateAll(uniqueAugmented, srcLang, tgtLang, 'primary'),
-        gtTranslateAll(uniqueAugmented, srcLang, tgtLang, 'secondary'),
-      ]);
-      const gtResults = { ...gt2, ...gt1 };
-
-      // Strip context prefix from each result and map back to original text
-      const newPairs = [];
-      for (const b of batch) {
-        if (xlMap[b.text]) continue;
-        const raw = gtResults[b.augmented] || '';
-        if (!raw) continue;
-
-        let val = raw;
-        if (b.ctx) {
-          const sepIdx = raw.indexOf('\u2E3B');
-          if (sepIdx >= 0) val = raw.slice(sepIdx + 1).trimStart();
-        }
-        val = val.trim();
-        if (val && val !== b.text) { xlMap[b.text] = val; newPairs.push([b.text, val]); }
-      }
-
-      // Phase 2: fallback providers for anything GT missed (context less critical here)
-      const stillMissing = batch.filter(b => !xlMap[b.text]).map(b => b.text);
-      if (stillMissing.length) {
-        const [ltRes, mmRes, lvRes] = await Promise.all([
-          ltTranslateAll(stillMissing, srcLang, tgtLang),
-          mmTranslateAll(stillMissing, srcLang, tgtLang),
-          lingvaTranslateAll(stillMissing, srcLang, tgtLang),
-        ]);
-        Object.assign(xlMap, ltRes, mmRes, lvRes);
-        for (const t of stillMissing) { if (xlMap[t] && xlMap[t] !== t) newPairs.push([t, xlMap[t]]); }
-      }
-
-      statsStop();
-      if (newPairs.length) TranslationCache.setMany(newPairs, srcLang, tgtLang);
-      if (onProgress) onProgress(uniqueTexts.length, uniqueTexts.length);
-      log(`Context-translate done: ${Object.keys(xlMap).length}/${uniqueTexts.length}`, 'ok');
-      
-      // Apply glossary override rules directly to all translated values
-      for (const key of Object.keys(xlMap)) {
-        xlMap[key] = applyGlossaryDirect(xlMap[key]);
-      }
-      return xlMap;
-    }
 
     // ── Image Background & Text Color Sampler ──────────────────────────────
     function sampleBackgroundColor(ctx, x, y, w, h, imgWidth, imgHeight) {
@@ -4909,7 +4842,8 @@
       setRowSubtitle(id, `Translating ${paragraphs.length} blocks…`);
       setRowProgressBar(id, 65);
 
-      const translationMap = await translateWithContext(paragraphs, srcLang, tgtLang, (done, total) => {
+      const uniqueTexts = [...new Set(paragraphs.map(p => p.text).filter(t => t && !SKIP_RE.test(t)))];
+      const translationMap = await translateAll(uniqueTexts, srcLang, tgtLang, (done, total) => {
         setRowProgressBar(id, 65 + Math.round((done / total) * 25));
         setRowSubtitle(id, `Translating ${done}/${total}…`);
       });
@@ -5093,7 +5027,8 @@
       setRowProgressBar(id, 15);
 
       const t0 = performance.now();
-      const translationMap = await translateWithContext(paragraphs, srcLang, tgtLang, (done, total) => {
+      const uniqueTexts = [...new Set(paragraphs.map(p => p.text).filter(t => t && !SKIP_RE.test(t)))];
+      const translationMap = await translateAll(uniqueTexts, srcLang, tgtLang, (done, total) => {
         setRowProgressBar(id, 15 + Math.round((done / total) * 65));
         setRowSubtitle(id, `Translating ${done}/${total}…`);
       });
