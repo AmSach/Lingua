@@ -1821,6 +1821,14 @@
                 </div>
               </div>
 
+              <!-- Signature Toggle -->
+              <div style="margin-top: 4px;">
+                <label class="toggle-switch" style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.75rem; font-family:var(--sans); user-select:none;">
+                  <input type="checkbox" id="editIsSignature" onchange="toggleIsSignature()" style="cursor:pointer;">
+                  <span style="font-weight:600; color:var(--ac2);">✒️ Preserve Signature / Original</span>
+                </label>
+              </div>
+
               <!-- Position Sliders -->
               <div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--mu); font-weight: 600; text-transform: uppercase;">
@@ -3165,6 +3173,15 @@
           current.y = Math.min(...ys);
           current.h = Math.max(...yMaxs) - current.y;
 
+          // Automatic signature/handwriting detection:
+          const isBottomRight = (current.x > colWidth * 0.48) && (current.y < 210);
+          const textClean = current.text.trim().toLowerCase();
+          const isSigPattern = textClean === '124.' || textClean === '124' || textClean === 'phil' || textClean === 'plul';
+          if (isBottomRight && isSigPattern) {
+            current.isSignature = true;
+            current.displayText = ''; // don't draw translated text over it
+          }
+
           paragraphs.push(current);
         }
         current = null;
@@ -3373,7 +3390,7 @@
       });
 
       for (const para of resolvedParas) {
-        if (!para.displayText?.trim()) continue;
+        if (para.isSignature || !para.displayText?.trim()) continue;
         const page = outPages[para.pageIndex];
         if (!page) continue;
 
@@ -3865,6 +3882,9 @@
       
       updateStyleButtonStates(para);
 
+      const isSig = !!para.isSignature;
+      document.getElementById('editIsSignature').checked = isSig;
+
       let pgW = 612;
       let pgH = 792;
       if (para.lines?.[0]) {
@@ -3912,6 +3932,24 @@
     }
 
     window.deselectPara = deselectPara;
+
+    window.toggleIsSignature = () => {
+      if (selectedParaIdx === null) return;
+      const item = fileQueue.find(q => q.id === activePreviewItemId);
+      const para = item.paragraphs[selectedParaIdx];
+      const checked = document.getElementById('editIsSignature').checked;
+      para.isSignature = checked;
+      if (checked) {
+        document.getElementById('editTransText').value = '';
+        para.displayText = '';
+        document.getElementById('editCharCount').textContent = '0';
+      } else {
+        const translatedVal = item.polishedMap[para.text] || para.text;
+        document.getElementById('editTransText').value = translatedVal;
+        para.displayText = translatedVal;
+        document.getElementById('editCharCount').textContent = translatedVal.length;
+      }
+    };
 
     window.onParaTextInput = () => {
       const val = document.getElementById('editTransText').value;
@@ -4514,7 +4552,7 @@
       item.tgtLang = tgtLang;
 
       for (const para of paragraphs) {
-        if (!para.displayText?.trim()) continue;
+        if (para.isSignature || !para.displayText?.trim()) continue;
 
         const x = para.x;
         const y = img.height - para.y - para.h;
@@ -4592,6 +4630,7 @@
       ctx.drawImage(img, 0, 0);
 
       for (const para of item.paragraphs) {
+        if (para.isSignature) continue;
         const displayText = para.displayText !== undefined ? para.displayText : (item.polishedMap[para.text] || para.text);
         if (!displayText?.trim()) continue;
 
