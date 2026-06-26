@@ -1,13 +1,3 @@
-# 
-#  ██╗     ██╗███╗   ██╗ ██████╗ ██╗   ██╗ █████╗ 
-#  ██║     ██║████╗  ██║██╔════╝ ██║   ██║██╔══██╗
-#  ██║     ██║██╔██╗ ██║██║  ███╗██║   ██║███████║
-#  ██║     ██║██║╚██╗██║██║   ██║██║   ██║██╔══██╗
-#  ███████╗██║██║ ╚████║╚██████╔╝╚██████╔╝██║  ██║
-#  ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝ v23
-#
-#  ── THE ZERO-BACKEND, OFFLINE-FIRST DOCUMENT TRANSMUTER ──
-#
 
 > **"It's just a single, self-contained index.html file. No servers, no user accounts, and absolutely no telemetry. Yet, it packs a 10-provider redundant fallback cascade, a multi-threaded WebAssembly OCR pool, and a custom high-DPI canvas-based shaper to render Indic/Arabic text perfectly. Run it locally, host it on Vercel, or throw it on a floppy disk—it just works."**
 
